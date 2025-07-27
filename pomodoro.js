@@ -2,28 +2,35 @@
 const timeDisplay = document.querySelector("#display-time");
 const italicContainer = document.querySelector("#italic-word");
 const button = document.querySelector('button');
-const img = document.querySelector("#traffic-light");
+const img = document.querySelector("#todo-image");
 
-let numPomodoros = 0;
-let timeStopped = true;
-
+// TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
     "STUDYING": "25:00",
     "SHORT_BREAK": "5:00",
     "LONG_BREAK": "30:00"
 }
 
+const TRAFFIC_LIGHT = {
+    "GREEN": 'images/traffic-lights/64px-Traffic_lights_dark_green.svg.png',
+    "YELLOW": 'images/traffic-lights/64px-Traffic_lights_dark_yellow.svg.png',
+    "RED": 'images/traffic-lights/64px-Traffic_lights_dark_red.svg.png'
+}
+
+let numPomodoros = 0;
+let timeStopped = true;
 let currentState = STATE.STUDYING;
 let [minutesLeft, secondsLeft] = currentState.split(":");
-
-let timerIdInterval = null;
+let alarmTimerIdInterval = null;
 
 function updateClock(){
+    [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentState.split(":");
 
     // Indicates less than 1 minute before alarm
     if (minutesLeft == 0){
-        img.src = 'images/64px-Traffic_lights_dark_yellow.svg.png';
+        img.src = TRAFFIC_LIGHT.YELLOW;
     }
+    
 
     // Stops timer to play alarm after each session
     if (minutesLeft == 0 && secondsLeft == 0){
@@ -32,7 +39,7 @@ function updateClock(){
 
         audio.addEventListener('playing', () => {
             // Wrapping up study session
-            if (currentState == STATE.STUDYING){
+            if (currentState === STATE.STUDYING){
                 ++numPomodoros;
 
                 // Award longer break after 4 study sessions
@@ -57,18 +64,20 @@ function updateClock(){
                 italicContainer.textContent = "STUDY";
                 italicContainer.style.color = 'red';
             }
+            console.log(currentState);
 
-            img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+            img.src = TRAFFIC_LIGHT.RED;
+
             displayTime(minutesLeft, secondsLeft);
-            clearInterval(timerIdInterval);
+            clearInterval(alarmTimerIdInterval);
         })
 
         // Starts new timer AFTER alarm goes off
         audio.addEventListener('ended', () => {
             clearInterval(flashTimerIdInterval);
             timeDisplay.style.color = '';
-            timerIdInterval = setInterval(updateClock, SECOND)
-            img.src = 'images/64px-Traffic_lights_dark_green.svg.png';
+            alarmTimerIdInterval = setInterval(updateClock, SECOND)
+            img.src = TRAFFIC_LIGHT.GREEN;
         })
     }
 
@@ -83,9 +92,6 @@ function updateClock(){
         --secondsLeft;
     }
 
-    // secondsLeft = padTime(secondsLeft)
-    // minutesLeft = padTime(minutesLeft)
-
     displayTime(minutesLeft, secondsLeft);
 }
 
@@ -95,7 +101,7 @@ function padTime(timeUnit){
 }
 
 function displayTime(minutes, seconds){
-    timeDisplay.textContent = `${padTime(minutesLeft)}:${padTime(secondsLeft)}`;
+    timeDisplay.textContent = `${padTime(minutes)}:${padTime(seconds)}`;
 }
 
 function flashTimer(){
@@ -114,27 +120,26 @@ button.addEventListener('click', () => {
     timeStopped = !timeStopped;
 
     // Starts timer
-    if (!timerIdInterval || !timeStopped){
-        timerIdInterval = setInterval(updateClock, SECOND)
-        if (currentState == STATE.STUDYING){
+    if (!alarmTimerIdInterval || !timeStopped){
+        alarmTimerIdInterval = setInterval(updateClock, SECOND)
+        if (currentState === STATE.STUDYING){
             italicContainer.textContent = "STUDY";
             italicContainer.style.color = 'red';
-            img.src = 'images/64px-Traffic_lights_dark_green.svg.png';
+            img.src = TRAFFIC_LIGHT.GREEN;
         }
         else {
             italicContainer.textContent = "RELAX";
             italicContainer.style.color = 'rgb(127, 165, 255)';
-            img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+            img.src = TRAFFIC_LIGHT.RED;
         }
-        
     }
 
     // Stops timer if interruption occurs and resets it
     else {
         [minutesLeft, secondsLeft] = currentState.split(":");
         displayTime(minutesLeft, secondsLeft);
-        clearInterval(timerIdInterval);
-        img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+        clearInterval(alarmTimerIdInterval);
+        img.src = TRAFFIC_LIGHT.RED;
     }
 })
 
