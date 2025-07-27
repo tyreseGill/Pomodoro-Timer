@@ -59,6 +59,14 @@ button {
 
 }
 
-#traffic-light {
+#container {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+}
 
+#tv-screen {
+    height: 100%;
+    width: 275px;
+    object-fit: contain;
 }
