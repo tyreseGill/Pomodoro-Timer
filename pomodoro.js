@@ -1,32 +1,129 @@
-const timeDisplay = document.querySelector("#display-time");
 
-// 
-let minutesLeft = 25;
-let secondsLeft = 0;
+const timeDisplay = document.querySelector("#display-time");
+const italicContainer = document.querySelector("#italic-word");
+const button = document.querySelector('button');
+const img = document.querySelector("#traffic-light");
+
+let numPomodoros = 0;
+let italicWord = "STUDY";
+let timeStopped = true;
+
+const STATE = {
+    // "STUDYING": "25:00",
+    "STUDYING": "25:00",
+    "SHORT_BREAK": "5:00",
+    "LONG_BREAK": "30:00"
+}
+
+let currentState = STATE.STUDYING;
+let [minutesLeft, secondsLeft] = currentState.split(":");
+
+let idInterval = null;
 
 function updateClock(){
-    // Stops timer after 25 minutes
-    if (minutesLeft == 0 && secondsLeft == 0){
-        return;
+
+    // Indicates less than 1 minute before alarm
+    if (minutesLeft == 0){
+        img.src = 'images/64px-Traffic_lights_dark_yellow.svg.png';
     }
 
-    --secondsLeft;
+    // Stops timer to play alarm after each session
+    if (minutesLeft == 0 && secondsLeft == 0){
+        const audio = new Audio('audio/Beep_alarm_clock.ogg');
+        audio.play();
+
+        audio.addEventListener('playing', () => {
+            // Wrapping up study session
+            if (currentState == STATE.STUDYING){
+                ++numPomodoros;
+
+                // Award longer break after 4 study sessions
+                if (numPomodoros % 4 === 0){
+                    currentState = STATE.LONG_BREAK;
+                    [minutesLeft, secondsLeft] = (STATE.LONG_BREAK).split(":");
+                }
+                else {
+                    currentState = STATE.SHORT_BREAK;
+                    [minutesLeft, secondsLeft] = (STATE.SHORT_BREAK).split(":");
+                }
+
+                italicContainer.textContent = "RELAX";
+                italicContainer.style.color = 'rgb(127, 165, 255)';
+            }
+
+            // Wrapping up break session
+            else {
+                currentState = STATE.STUDYING;
+                [minutesLeft, secondsLeft] = (STATE.STUDYING).split(":");
+                italicContainer.textContent = "STUDY";
+                italicContainer.style.color = 'red';
+            }
+
+            img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+            displayTime(minutesLeft, secondsLeft);
+            clearInterval(idInterval);
+        })
+
+        // Starts new timer AFTER alarm goes off
+        audio.addEventListener('ended', () => {
+            idInterval = setInterval(updateClock, SECOND)
+            img.src = 'images/64px-Traffic_lights_dark_green.svg.png';
+        })
+    }
 
     // Prevents seconds from dipping into negatives
-    if (secondsLeft < 0){
-        --minutesLeft;
+    else if (secondsLeft == 0){
+        if (minutesLeft > 0){
+            --minutesLeft;
+        }
         secondsLeft = 59;
     }
+    else {
+        --secondsLeft;
+    }
 
-    // Ensures 00:00 format
-    secondsLeft = String(secondsLeft)
-                  .padStart(2, "0");
-    minutesLeft = String(minutesLeft)
-                  .padStart(2, "0");
+    // secondsLeft = padTime(secondsLeft)
+    // minutesLeft = padTime(minutesLeft)
 
-    timeDisplay.textContent = `${minutesLeft}:${secondsLeft}`;
+    displayTime(minutesLeft, secondsLeft);
+}
+
+// Ensures mm:ss format
+function padTime(timeUnit){
+    return String(timeUnit).padStart(2, "0")
+}
+
+function displayTime(minutes, seconds){
+    timeDisplay.textContent = `${padTime(minutesLeft)}:${padTime(secondsLeft)}`;
 }
 
 // Executes function to update displayed clock every second
 SECOND = 1_000;
-setInterval(updateClock, SECOND)
+button.addEventListener('click', () => {
+    timeStopped = !timeStopped;
+
+    // Starts timer
+    if (!idInterval || !timeStopped){
+        idInterval = setInterval(updateClock, SECOND)
+        if (currentState == STATE.STUDYING){
+            italicContainer.textContent = "STUDY";
+            italicContainer.style.color = 'red';
+            img.src = 'images/64px-Traffic_lights_dark_green.svg.png';
+        }
+        else {
+            italicContainer.textContent = "RELAX";
+            italicContainer.style.color = 'rgb(127, 165, 255)';
+            img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+        }
+        
+    }
+
+    // Stops timer if interruption occurs and resets it
+    else {
+        [minutesLeft, secondsLeft] = currentState.split(":");
+        displayTime(minutesLeft, secondsLeft);
+        clearInterval(idInterval);
+        img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
+    }
+})
+
