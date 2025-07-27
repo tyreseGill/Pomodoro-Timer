@@ -65,8 +65,23 @@ button {
     align-items: center;
 }
 
+#tv-container {
+    display: flex;
+    position: relative;
+    width: 300px;
+    align-items: center;
+}
+
 #tv-screen {
-    height: 100%;
-    width: 275px;
+    height: 165px;
+    max-width: 200px;
+    margin-left: 22.5px;
+    margin-bottom: 5px;
     object-fit: contain;
+    position: absolute;
+    border-radius: 20px;
+}
+
+#tv-set {
+    width: 100%
 }
