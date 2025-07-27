@@ -1,6 +1,6 @@
-* {
-    /* border: 2px solid red; */
-}
+/* * {
+    border: 2px solid red;
+} */
 
 body {
     display: flex;
@@ -21,10 +21,13 @@ body {
 #display {
     padding: 10px;
     border: black solid 3px;
+    justify-content: center;
     background-color: olivedrab;
     width: fit-content;
     display: flex;
+    width: 300px;
     height: 100px;
+    border-radius: 5px;
 }
 
 #display-time {
@@ -32,7 +35,3 @@ body {
     font-size: 5rem;
 }
 
-#display-meridiem {
-    text-align: center;
-    font-size: 2rem;
-}
