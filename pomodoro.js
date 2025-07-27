@@ -3,12 +3,13 @@ const timeDisplay = document.querySelector("#display-time");
 const italicContainer = document.querySelector("#italic-word");
 const button = document.querySelector('button');
 const img = document.querySelector("#todo-image");
+const tvScreen = document.querySelector("#click-overlay");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
-    "STUDYING": "25:00",
-    "SHORT_BREAK": "5:00",
-    "LONG_BREAK": "30:00"
+    "STUDYING": "0:03",
+    "SHORT_BREAK": "0:02",
+    "LONG_BREAK": "0:01"
 }
 
 const TRAFFIC_LIGHT = {
@@ -141,5 +142,24 @@ button.addEventListener('click', () => {
         clearInterval(alarmTimerIdInterval);
         img.src = TRAFFIC_LIGHT.RED;
     }
+})
+
+tvScreen.addEventListener('click', () => {
+    let remoteImg = document.createElement("img")
+    remoteImg.style.position = 'absolute';
+    remoteImg.style.bottom = 0
+    remoteImg.style.right = 0;
+    remoteImg.style.width = '200px';
+    remoteImg.style.transform = 'rotateY(180deg)';
+    remoteImg.src = "images/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
+    document.body.appendChild(remoteImg)
+    tvScreen.remove();
+
+    setTimeout( () => {
+        if (remoteImg){
+            document.body.removeChild(remoteImg);
+        }
+    }, 500);
+
 })
 

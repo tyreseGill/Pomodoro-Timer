@@ -72,9 +72,8 @@ button {
     align-items: center;
 }
 
-#tv-screen {
+#click-overlay, #tv-screen {
     height: 165px;
-    max-width: 200px;
     margin-left: 22.5px;
     margin-bottom: 5px;
     object-fit: contain;
@@ -82,6 +81,17 @@ button {
     border-radius: 20px;
 }
 
+#tv-screen {
+    max-width: 200px;
+}
+
+#click-overlay {
+    background: linear-gradient(to top left, #a5b8d6, white);
+    height: 165px;
+    width: 200px;
+}
+
 #tv-set {
     width: 100%
 }
+
