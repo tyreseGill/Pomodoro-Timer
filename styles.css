@@ -1,0 +1,38 @@
+* {
+    /* border: 2px solid red; */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    flex: 0 0 auto;
+}
+
+#clock {
+    display: flex;
+    justify-content: center;
+    width: 400px;
+    height: 170px;
+    align-items: center;
+    background-color: black;
+    border-radius: 10px;
+}
+
+#display {
+    padding: 10px;
+    border: black solid 3px;
+    background-color: olivedrab;
+    width: fit-content;
+    display: flex;
+    height: 100px;
+}
+
+#display-time {
+    text-align: center;
+    font-size: 5rem;
+}
+
+#display-meridiem {
+    text-align: center;
+    font-size: 2rem;
+}
