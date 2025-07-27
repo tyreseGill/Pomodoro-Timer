@@ -5,11 +5,9 @@ const button = document.querySelector('button');
 const img = document.querySelector("#traffic-light");
 
 let numPomodoros = 0;
-let italicWord = "STUDY";
 let timeStopped = true;
 
 const STATE = {
-    // "STUDYING": "25:00",
     "STUDYING": "25:00",
     "SHORT_BREAK": "5:00",
     "LONG_BREAK": "30:00"
@@ -18,7 +16,7 @@ const STATE = {
 let currentState = STATE.STUDYING;
 let [minutesLeft, secondsLeft] = currentState.split(":");
 
-let idInterval = null;
+let timerIdInterval = null;
 
 function updateClock(){
 
@@ -46,6 +44,7 @@ function updateClock(){
                     currentState = STATE.SHORT_BREAK;
                     [minutesLeft, secondsLeft] = (STATE.SHORT_BREAK).split(":");
                 }
+                flashTimerIdInterval = setInterval(flashTimer, 250);
 
                 italicContainer.textContent = "RELAX";
                 italicContainer.style.color = 'rgb(127, 165, 255)';
@@ -61,12 +60,14 @@ function updateClock(){
 
             img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
             displayTime(minutesLeft, secondsLeft);
-            clearInterval(idInterval);
+            clearInterval(timerIdInterval);
         })
 
         // Starts new timer AFTER alarm goes off
         audio.addEventListener('ended', () => {
-            idInterval = setInterval(updateClock, SECOND)
+            clearInterval(flashTimerIdInterval);
+            timeDisplay.style.color = '';
+            timerIdInterval = setInterval(updateClock, SECOND)
             img.src = 'images/64px-Traffic_lights_dark_green.svg.png';
         })
     }
@@ -97,14 +98,24 @@ function displayTime(minutes, seconds){
     timeDisplay.textContent = `${padTime(minutesLeft)}:${padTime(secondsLeft)}`;
 }
 
+function flashTimer(){
+    if (timeDisplay.style.color === ''){
+        timeDisplay.style.color = 'white';
+    }
+    else {
+        timeDisplay.style.color = '';
+    }
+}
+
+
 // Executes function to update displayed clock every second
 SECOND = 1_000;
 button.addEventListener('click', () => {
     timeStopped = !timeStopped;
 
     // Starts timer
-    if (!idInterval || !timeStopped){
-        idInterval = setInterval(updateClock, SECOND)
+    if (!timerIdInterval || !timeStopped){
+        timerIdInterval = setInterval(updateClock, SECOND)
         if (currentState == STATE.STUDYING){
             italicContainer.textContent = "STUDY";
             italicContainer.style.color = 'red';
@@ -122,7 +133,7 @@ button.addEventListener('click', () => {
     else {
         [minutesLeft, secondsLeft] = currentState.split(":");
         displayTime(minutesLeft, secondsLeft);
-        clearInterval(idInterval);
+        clearInterval(timerIdInterval);
         img.src = 'images/64px-Traffic_lights_dark_red.svg.png';
     }
 })
