@@ -4,6 +4,8 @@ const italicContainer = document.querySelector("#italic-word");
 const button = document.querySelector('button');
 const img = document.querySelector("#todo-image");
 const tvScreen = document.querySelector("#click-overlay");
+const placeholder = document.querySelector("#no-video-text");
+const addMusicBtn = document.querySelector("#add-music-button");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
@@ -23,6 +25,9 @@ let timeStopped = true;
 let currentState = STATE.STUDYING;
 let [minutesLeft, secondsLeft] = currentState.split(":");
 let alarmTimerIdInterval = null;
+let colorToggleGrey = true;
+let musicToBePlayed = [];
+let lastVideoAdded = null;
 
 function updateClock(){
     [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentState.split(":");
@@ -161,5 +166,58 @@ tvScreen.addEventListener('click', () => {
         }
     }, 500);
 
+});
+
+addMusicBtn.addEventListener('click', () => {
+    let searchBar = document.querySelector("input[type='search']");
+    url = searchBar.value;
+    searchBar.value = "";
+    if (url.startsWith("https://www.youtube.com")){
+        videoId = url.match(/(?<=\?v=)[^&]+/)
+        embedLink = `https://www.youtube.com/embed/${videoId}`;
+        thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        // TODO: Throw error
+        if (document.querySelector("#no-video-text")){
+            placeholder.remove();
+        }
+
+        let addedMusic = document.createElement("img");
+
+        addedMusic.setAttribute('width', '300');
+        addedMusic.setAttribute('src', thumbnailLink);
+
+        document.querySelector("#queue").appendChild(addedMusic);
+        addedMusic.textContent = embedLink;
+        if (colorToggleGrey){
+            addedMusic.style.backgroundColor = "#e3e2de";
+        }
+        else {
+            addedMusic.style.backgroundColor = "#b8b6b2";
+        }
+
+        colorToggleGrey = !colorToggleGrey;
+
+        let firstVideo = musicToBePlayed[0];
+        let lastVideoAdded = null;
+        let newVideoBeingAdded = addedMusic;
+        if (musicToBePlayed.length === 0){
+            addedMusic.style.borderRadius = "10px";
+        }
+        else if (musicToBePlayed.length === 1){
+            firstVideo.style.borderRadius = "10px 10px 0 0";
+            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
+        }
+        else {
+            lastVideoAdded = musicToBePlayed[musicToBePlayed.length - 1];
+            lastVideoAdded.style.borderRadius = "0";
+            firstVideo.style.borderRadius = "10px 10px 0 0";
+            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
+        }
+
+        musicToBePlayed.push(addedMusic);
+    }
+    else{
+        alert("Um... I'm not sure what you gave me");
+    }
 })
 

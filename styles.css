@@ -138,12 +138,14 @@ button {
     object-fit: fill;
     display: flex;
     gap: 5px;
+    margin-bottom: 15px;
 }
     
-#music-comp {
+#playlist-section {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 400px;
 }
 
 #no-video-text {
@@ -152,4 +154,14 @@ button {
     border: 2px solid gray;
     border-radius: 10px;
     margin: 20px;
+}
+
+#queue {
+    width: 300px;
+    gap: 0;
+}
+
+#queue img {
+    margin: 0;
+    padding: 10px;
 }
