@@ -1,4 +1,6 @@
-
+/* * {
+    border: red solid 2px;
+} */
 
 main {
     display: flex;
@@ -131,5 +133,23 @@ button {
 #tv-set {
     width: 100%
 }
-    
 
+#searchbar {
+    object-fit: fill;
+    display: flex;
+    gap: 5px;
+}
+    
+#music-comp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#no-video-text {
+    width: 300px;
+    padding: 10px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    margin: 20px;
+}
