@@ -147,9 +147,9 @@ button.addEventListener('click', () => {
 tvScreen.addEventListener('click', () => {
     let remoteImg = document.createElement("img")
     remoteImg.style.position = 'absolute';
-    remoteImg.style.bottom = 0
-    remoteImg.style.right = 0;
-    remoteImg.style.width = '200px';
+    remoteImg.style.top = '10px';
+    remoteImg.style.right = '10px';
+    remoteImg.style.width = '40px';
     remoteImg.style.transform = 'rotateY(180deg)';
     remoteImg.src = "images/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
     document.body.appendChild(remoteImg)
