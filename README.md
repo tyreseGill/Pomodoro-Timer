@@ -17,19 +17,18 @@ This is a simple JavaScript project to aid users employ the Pomodoro technique w
 
 ## Attributions
 
-### Image Attributions
-
-This project uses the image files **"Traffic lights dark green.svg"**, **"Traffic lights dark yellow.svg"**, and **"Traffic lights dark red.svg"** which were originally based on **"Image:Ampel.svg"** by **Wikimedia Commons user Manuel Strehl** and remixed by **Wikimedia Commons users maix and Minoa**. The original image is available at [https://commons.wikimedia.org/wiki/File:Ampel.svg](https://commons.wikimedia.org/wiki/File:Ampel.svg). Meanwhile, the remixed images used are available at [https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_green.svg](https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_green.svg), [https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_yellow.svg](https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_yellow.svg), and [https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_red.svg](https://commons.wikimedia.org/wiki/File:Traffic_lights_dark_red.svg) respectively.
-
-Licensed under [Creative Commons Attribution-Share Alike 2.5 Generic](https://creativecommons.org/licenses/by-sa/2.5/deed.en).
-
-Changes: None
-
-
 ### Audio Attributions
+- **Beep alarm clock.ogg**: Jeuwre, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons
 
-This project uses the audio file **"Beep alarm clock"** by **Wikimedia Commons user Jeuwre**, available at [https://commons.wikimedia.org/wiki/File:Beep_alarm_clock.ogg](https://commons.wikimedia.org/wiki/File:Beep_alarm_clock.ogg).
+### Image Attributions
+- **"Man Relaxing on the Beach Cartoon Vector.svg"**: Videoplasty.com, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons
+- **"Professor Reading a Book at his Desk Cartoon.svg"**: Videoplasty.com, CC BY-SA 4.0 <https://creativecommons.org/licenses/by-sa/4.0>, via Wikimedia Commons
+- **"Traffic lights dark green.svg"**: Manuel Strehl (original)maix (dark version)Minoa (code optimisation), CC BY-SA 2.5 <https://creativecommons.org/licenses/by-sa/2.5>, via Wikimedia Commons
+- **"Traffic lights dark red.svg""**: Manuel Strehl (original)maix (dark version)Minoa (code optimisation), CC BY-SA 2.5 <https://creativecommons.org/licenses/by-sa/2.5>, via Wikimedia Commons
+- **"Traffic lights dark yellow.svg"**: Manuel Strehl (original)maix (dark version)Minoa (code optimisation), CC BY-SA 2.5 <https://creativecommons.org/licenses/by-sa/2.5>, via Wikimedia Commons
+- **"Tv color bars.svg"**: Douglas Peale, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia Commons
+- **"TV-icon-2.svg"**: Traced by User:Stannered, CC BY-SA 3.0 <http://creativecommons.org/licenses/by-sa/3.0/>, via Wikimedia Commons
+- **"Tv-remote - Delapouite - game-icons.svg"**: Delapouite, CC BY 3.0 <https://creativecommons.org/licenses/by/3.0>, via Wikimedia Commons
 
-Licensed under [Creative Commons Attribution-Share Alike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
-
-Changes: None
+### Video Attributions
+- **"Static with white noise.webm"**: MennasDosbin, Public domain, via Wikimedia Commons
