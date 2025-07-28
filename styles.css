@@ -76,7 +76,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #tv-screen {
+    #click-overlay, #static-tv-screen {
         /* 340, 420 */
         height: 340px; 
         width: 420px;
@@ -101,7 +101,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #tv-screen {
+    #click-overlay, #static-tv-screen {
         height: 220px;
         margin-left: 27px;
         margin-bottom: 7px;
@@ -110,7 +110,7 @@ button {
         border-radius: 20px;
     }
 
-    #tv-screen {
+    #static-tv-screen {
         max-width: 267px;
     }
 
@@ -126,7 +126,7 @@ button {
     overflow: hidden;
 }
 
-#click-overlay, #tv-screen, #click-overlay {
+#click-overlay, #static-tv-screen, #click-overlay {
     border: rgb(96, 96, 96) solid 2px;
 }
 

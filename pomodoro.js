@@ -6,6 +6,7 @@ const img = document.querySelector("#todo-image");
 const tvScreen = document.querySelector("#click-overlay");
 const placeholder = document.querySelector("#no-video-text");
 const addMusicBtn = document.querySelector("#add-music-button");
+const staticTvScreen = document.querySelector("#static-tv-screen");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
@@ -119,6 +120,10 @@ function flashTimer(){
     }
 }
 
+function toggleMute(){
+    staticTvScreen.muted = !staticTvScreen.muted;
+}
+
 
 // Executes function to update displayed clock every second
 SECOND = 1_000;
@@ -151,6 +156,9 @@ button.addEventListener('click', () => {
 
 tvScreen.addEventListener('click', () => {
     let remoteImg = document.createElement("img")
+
+    toggleMute();
+
     remoteImg.style.position = 'absolute';
     remoteImg.style.top = '10px';
     remoteImg.style.right = '10px';
