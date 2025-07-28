@@ -1,14 +1,15 @@
-/* * {
-    border: 2px solid red;
-} */
 
-body {
+
+main {
     display: flex;
     text-align: center;
-    flex-direction: column;
     align-items: center;
-    /* flex: 0 0 auto;
-    flex-wrap: wrap; */
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+h1 {
+    text-align: center;
 }
 
 #clock {
@@ -17,9 +18,9 @@ body {
     align-items: center;
     width: 400px;
     height: 200px;
-    align-items: center;
     background-color: black;
     border-radius: 10px;
+    margin: 0 20px;
 }
 
 #display {
@@ -48,50 +49,87 @@ button {
     display: flex;
     border: 5px solid grey;
     background-color: bisque;
-    width: 250px;
+    /* width: 250px; */
     margin: 20px;
     padding: 10px;
     border-radius: 2px;
     gap: 30px;
+    flex-grow: 1;
 }
 
-#session-text-area {
-
-}
-
-#container {
+#timer-container {
     display: flex;
-    width: fit-content;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+}
+
+@media screen and (min-width:1080px) {
+    #tv-container {
+        display: flex;
+        position: relative;
+        width: 610px;
+        align-items: center;
+    }
+
+    #click-overlay, #tv-screen {
+        height: 340px;
+        width: 420px;
+        margin-left: 40px;
+        margin-bottom: 10px;
+        object-fit: contain;
+        position: absolute;
+        border-radius: 20px;
+    }
+
+    #tv-screen {
+        max-width: 420px;
+    }
+
+    #click-overlay {
+        background: linear-gradient(to top left, #a5b8d6, white);
+        height: 340px;
+    }
+}
+
+@media screen and (max-width:1079px) {
+    #tv-container {
+        display: flex;
+        position: relative;
+        width: 400px;
+        align-items: center;
+    }
+
+    #click-overlay, #tv-screen {
+        height: 220px;
+        margin-left: 27px;
+        margin-bottom: 7px;
+        object-fit: contain;
+        position: absolute;
+        border-radius: 20px;
+    }
+
+    #tv-screen {
+        max-width: 267px;
+    }
+
+    #click-overlay {
+        background: linear-gradient(to top left, #a5b8d6, white);
+        height: 220px;
+        width: 267px;
+    }
 }
 
 #tv-container {
-    display: flex;
-    position: relative;
-    width: 300px;
-    align-items: center;
+    margin: 0 20px;
 }
 
-#click-overlay, #tv-screen {
-    height: 165px;
-    margin-left: 22.5px;
-    margin-bottom: 5px;
-    object-fit: contain;
-    position: absolute;
-    border-radius: 20px;
-}
-
-#tv-screen {
-    max-width: 200px;
-}
-
-#click-overlay {
-    background: linear-gradient(to top left, #a5b8d6, white);
-    height: 165px;
-    width: 200px;
+#click-overlay, #tv-screen, #click-overlay {
+    border: rgb(96, 96, 96) solid 2px;
 }
 
 #tv-set {
     width: 100%
 }
+    
 

@@ -9,19 +9,21 @@
 </head>
 <body>
     <h1>Pomodoro Study</h1>
-    <div id="clock">
-        <div id="display">
-            <div id="display-time">25:00</div>
-        </div>
-        <button>Start/Stop</button>
-    </div>
-    <div id="container">
-        <div id="todo">
-            <div id="session-text-area">
-                <h2>What time is it?</h2>
-                <p>It's time to <b><i id="italic-word">. . .</i></b></p>
+    <main>
+        <div id="timer-container">
+            <div id="clock">
+                <div id="display">
+                    <div id="display-time">25:00</div>
+                </div>
+                <button>Start/Stop</button>
             </div>
-            <img id="todo-image" src="images/traffic-lights/64px-Traffic_lights_dark_red.svg.png">
+            <div id="todo">
+                <div id="session-text-area">
+                    <h2>What time is it?</h2>
+                    <p>It's time to <b><i id="italic-word">. . .</i></b></p>
+                </div>
+                <img id="todo-image" src="images/traffic-lights/64px-Traffic_lights_dark_red.svg.png">
+            </div>
         </div>
         <div id="tv-container">
             <img src="images/cartoon/TV-icon-2.svg" id="tv-set">
@@ -36,6 +38,7 @@
             </iframe>
             <div id="click-overlay"></div>
         </div>
+        <!-- </div> -->
     </div>
-</body>
+</main>
 </html>
