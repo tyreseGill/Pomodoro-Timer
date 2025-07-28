@@ -14,6 +14,14 @@ h1 {
     text-align: center;
 }
 
+.hidden {
+    visibility: hidden;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
 #clock {
     display: flex;
     flex-direction: column;
@@ -67,6 +75,10 @@ button {
     overflow: hidden;
 }
 
+#click-overlay, #static-tv-screen, #video-screen {
+    overflow: hidden;
+}
+
 @media screen and (min-width:1080px) {
     #tv-container {
         display: flex;
@@ -76,7 +88,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #static-tv-screen {
+    #click-overlay, #static-tv-screen, #video-screen {
         /* 340, 420 */
         height: 340px; 
         width: 420px;
@@ -91,6 +103,11 @@ button {
         background: linear-gradient(to top left, #a5b8d6, white);
         height: 340px;
     }
+
+    #transition-screen {
+        transform: scale(1.30);
+        transform-origin: 40% 30%;
+    }
 }
 
 @media screen and (max-width:1079px) {
@@ -101,7 +118,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #static-tv-screen {
+    #click-overlay, #static-tv-screen, #video-screen {
         height: 220px;
         margin-left: 27px;
         margin-bottom: 7px;
@@ -110,8 +127,13 @@ button {
         border-radius: 20px;
     }
 
-    #static-tv-screen {
+    #static-tv-screen, #video-screen {
         max-width: 267px;
+    }
+    /* Forces zoom at center of image */
+    #transition-screen {
+        transform: scale(0.83);
+        transform-origin: -45% -35%;
     }
 
     #click-overlay {
@@ -126,7 +148,7 @@ button {
     overflow: hidden;
 }
 
-#click-overlay, #static-tv-screen, #click-overlay {
+#click-overlay, #static-tv-screen, #click-overlay, #video-screen, #transition-screen {
     border: rgb(96, 96, 96) solid 2px;
 }
 
@@ -165,3 +187,13 @@ button {
     margin: 0;
     padding: 10px;
 }
+
+#video-screen {
+    /* background-color: aqua; */
+}
+/* 
+#transition-screen {
+    object-fit: cover;
+    transform: scale(1.5);
+    transform-origin: center;
+} */

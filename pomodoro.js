@@ -7,6 +7,7 @@ const tvScreen = document.querySelector("#click-overlay");
 const placeholder = document.querySelector("#no-video-text");
 const addMusicBtn = document.querySelector("#add-music-button");
 const staticTvScreen = document.querySelector("#static-tv-screen");
+const videoTvScreen = document.querySelector("#video-screen");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
@@ -27,8 +28,8 @@ let currentState = STATE.STUDYING;
 let [minutesLeft, secondsLeft] = currentState.split(":");
 let alarmTimerIdInterval = null;
 let colorToggleGrey = true;
+let videoThumbnails = [];
 let musicToBePlayed = [];
-let lastVideoAdded = null;
 
 function updateClock(){
     [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentState.split(":");
@@ -71,7 +72,6 @@ function updateClock(){
                 italicContainer.textContent = "STUDY";
                 italicContainer.style.color = 'red';
             }
-            console.log(currentState);
 
             img.src = TRAFFIC_LIGHT.RED;
 
@@ -124,6 +124,36 @@ function toggleMute(){
     staticTvScreen.muted = !staticTvScreen.muted;
 }
 
+function toggleTV(tvState){
+    // OFF to static
+    if (tvState === tvScreen){
+        tvScreen.classList.toggle("hidden");
+        staticTvScreen.classList.toggle("hidden");
+    }
+    // Static to Video or OFF
+    else if (tvState === staticTvScreen){
+        staticTvScreen.classList.toggle("hidden");
+        if (musicToBePlayed.length != 0){
+            videoTvScreen.setAttribute("src", musicToBePlayed.shift());
+            videoThumbnails[0].remove();
+            videoTvScreen.classList.toggle("hidden");
+        }
+        else {
+            tvScreen.classList.toggle("hidden");
+        }
+    }
+    // Video to next video or OFF
+    else {
+        if (musicToBePlayed){
+            // staticTvScreen.classList.toggle("hidden");
+            videoTvScreen.classList.toggle("hidden");
+        }
+        else {
+            alert("No videos to be played!");
+        }
+    }
+}
+
 
 // Executes function to update displayed clock every second
 SECOND = 1_000;
@@ -166,14 +196,13 @@ tvScreen.addEventListener('click', () => {
     remoteImg.style.transform = 'rotateY(180deg)';
     remoteImg.src = "images/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
     document.body.appendChild(remoteImg)
-    tvScreen.remove();
+    toggleTV(tvScreen);
 
     setTimeout( () => {
         if (remoteImg){
             document.body.removeChild(remoteImg);
         }
     }, 500);
-
 });
 
 addMusicBtn.addEventListener('click', () => {
@@ -184,48 +213,58 @@ addMusicBtn.addEventListener('click', () => {
         videoId = url.match(/(?<=\?v=)[^&]+/)
         embedLink = `https://www.youtube.com/embed/${videoId}`;
         thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+
+        musicToBePlayed.push(embedLink);
+
         // TODO: Throw error
         if (document.querySelector("#no-video-text")){
             placeholder.remove();
         }
 
-        let addedMusic = document.createElement("img");
+        let addedThumbnail = document.createElement("img");
 
-        addedMusic.setAttribute('width', '300');
-        addedMusic.setAttribute('src', thumbnailLink);
+        addedThumbnail.setAttribute('width', '300');
+        addedThumbnail.setAttribute('src', thumbnailLink);
 
-        document.querySelector("#queue").appendChild(addedMusic);
-        addedMusic.textContent = embedLink;
+        document.querySelector("#queue").appendChild(addedThumbnail);
+        addedThumbnail.textContent = embedLink;
         if (colorToggleGrey){
-            addedMusic.style.backgroundColor = "#e3e2de";
+            addedThumbnail.style.backgroundColor = "#e3e2de";
         }
         else {
-            addedMusic.style.backgroundColor = "#b8b6b2";
+            addedThumbnail.style.backgroundColor = "#b8b6b2";
         }
 
         colorToggleGrey = !colorToggleGrey;
 
-        let firstVideo = musicToBePlayed[0];
+        let firstVideo = videoThumbnails[0];
         let lastVideoAdded = null;
-        let newVideoBeingAdded = addedMusic;
-        if (musicToBePlayed.length === 0){
-            addedMusic.style.borderRadius = "10px";
+        let newVideoBeingAdded = addedThumbnail;
+        if (videoThumbnails.length === 0){
+            addedThumbnail.style.borderRadius = "10px";
         }
-        else if (musicToBePlayed.length === 1){
+        else if (videoThumbnails.length === 1){
             firstVideo.style.borderRadius = "10px 10px 0 0";
             newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
         }
         else {
-            lastVideoAdded = musicToBePlayed[musicToBePlayed.length - 1];
+            lastVideoAdded = videoThumbnails[videoThumbnails.length - 1];
             lastVideoAdded.style.borderRadius = "0";
             firstVideo.style.borderRadius = "10px 10px 0 0";
             newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
         }
 
-        musicToBePlayed.push(addedMusic);
+        videoThumbnails.push(addedThumbnail);
     }
     else{
         alert("Um... I'm not sure what you gave me");
     }
-})
+});
 
+
+staticTvScreen.addEventListener("click", () => {
+    toggleTV(staticTvScreen);
+    toggleMute();
+});
+
+// videoTvScreen.addEventListener("click", toggleTV);
