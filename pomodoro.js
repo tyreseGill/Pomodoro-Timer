@@ -8,6 +8,7 @@ const placeholder = document.querySelector("#no-video-text");
 const addMusicBtn = document.querySelector("#add-music-button");
 const staticTvScreen = document.querySelector("#static-tv-screen");
 const videoTvScreen = document.querySelector("#video-screen");
+const searchBar = document.querySelector("input[type='search']");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
@@ -33,7 +34,6 @@ let musicToBePlayed = [];
 
 (() => {
     let screen = document.querySelector("#static-tv-screen");
-    console.log(screen.volume);
     screen.volume = 0.1;
 })();
 
@@ -140,6 +140,7 @@ function toggleTV(tvState){
     else if (tvState === staticTvScreen){
         staticTvScreen.classList.toggle("hidden");
         if (musicToBePlayed.length != 0){
+            videoTvScreen.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
             videoTvScreen.setAttribute("src", musicToBePlayed.shift());
             videoThumbnails[0].remove();
             videoTvScreen.classList.toggle("hidden");
@@ -212,15 +213,18 @@ tvScreen.addEventListener('click', () => {
 });
 
 addMusicBtn.addEventListener('click', () => {
-    let searchBar = document.querySelector("input[type='search']");
     url = searchBar.value;
+    videoId = url.match(/(?<=\?v=)[^&]+/)
+    isValidUrl = url.startsWith("https://www.youtube.com") && videoId;
+
     searchBar.value = "";
-    if (url.startsWith("https://www.youtube.com")){
-        videoId = url.match(/(?<=\?v=)[^&]+/)
+
+    if (isValidUrl){
         embedLink = `https://www.youtube.com/embed/${videoId}`;
         thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 
         musicToBePlayed.push(embedLink);
+        // localStorage.setItem("")
 
         // TODO: Throw error
         if (document.querySelector("#no-video-text")){
@@ -243,9 +247,9 @@ addMusicBtn.addEventListener('click', () => {
 
         colorToggleGrey = !colorToggleGrey;
 
-        let firstVideo = videoThumbnails[0];
-        let lastVideoAdded = null;
-        let newVideoBeingAdded = addedThumbnail;
+        firstVideo = videoThumbnails[0];
+        lastVideoAdded = null;
+        newVideoBeingAdded = addedThumbnail;
         if (videoThumbnails.length === 0){
             addedThumbnail.style.borderRadius = "10px";
         }
@@ -263,7 +267,7 @@ addMusicBtn.addEventListener('click', () => {
         videoThumbnails.push(addedThumbnail);
     }
     else{
-        alert("Um... I'm not sure what you gave me");
+        alert("You input an invalid URL. Please copy/paste a valid URL to a YouTube video.");
     }
 });
 
@@ -272,5 +276,43 @@ staticTvScreen.addEventListener("click", () => {
     toggleTV(staticTvScreen);
     toggleMute();
 });
+
+
+// TODO: Add Cache to local storage to prevent copy/paste repeatedly
+// TODO: Add YouTube Video API
+// TODO: Move video element down and maybe zoom in more. Video currently has empty space on top and bottom
+// TODO: Have user make two playlists: one listing videos to play/watch during relaxation breaks and one to have playing during actual study sessions
+// TODO: Currently pushing entire embed link when should be pushing just video ID to save space
+
+
+// function addMealLS(mealId){
+//     const mealIds = getMealsLS();
+//     localStorage.setItem("mealIds", JSON.stringify(
+//         [...mealIds, mealId]));
+// }
+
+// function removeMealLS(mealId){
+//     const mealIds = getMealsLS();
+
+//     localStorage.setItem("mealIds", JSON.stringify(
+//         mealIds.filter(id => id !== mealId)
+//     ));
+// }
+
+// function getMealsLS(){
+//     const mealIds = JSON.parse(localStorage.getItem("mealIds"));
+//     return mealIds === null ? [] : mealIds;
+// }
+
+// window.addEventListener("DOMContentLoaded", () => {
+//     const savedSearch = localStorage.getItem("searchBar");
+//     if (savedSearch){
+//         searchBar.value = savedSearch;
+//     }
+// });
+
+// searchBar.addEventListener("input", () => {
+//     localStorage.setItem(savedSearch, searchBar.value);
+// });
 
 // videoTvScreen.addEventListener("click", toggleTV);
