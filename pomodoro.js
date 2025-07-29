@@ -31,6 +31,12 @@ let colorToggleGrey = true;
 let videoThumbnails = [];
 let musicToBePlayed = [];
 
+(() => {
+    let screen = document.querySelector("#static-tv-screen");
+    console.log(screen.volume);
+    screen.volume = 0.1;
+})();
+
 function updateClock(){
     [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentState.split(":");
 
