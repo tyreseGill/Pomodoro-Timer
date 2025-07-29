@@ -2,10 +2,18 @@
     border: red solid 2px;
 } */
 
+header {
+    background-color: antiquewhite;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-top: gray solid 3px;
+    border-bottom: gray solid 3px;
+}
+
 main {
     display: flex;
     text-align: center;
-    align-items: center;
+    /* align-items: center; */
     flex-wrap: wrap;
     justify-content: space-around;
 }
@@ -14,12 +22,20 @@ h1 {
     text-align: center;
 }
 
+button {
+    margin: 10px;
+}
+
 .hidden {
     visibility: hidden;
 }
 
 .clickable {
     cursor: pointer;
+}
+
+#italic-word {
+    font-size: 2em;
 }
 
 #clock {
@@ -51,20 +67,19 @@ h1 {
     font-size: 5rem;
 }
 
-button {
-    margin: 10px;
-}
-
 #todo {
     display: flex;
     border: 5px solid grey;
-    background-color: bisque;
-    /* width: 250px; */
+    background-color: antiquewhite;
+    height: 100%;
     margin: 20px;
     padding: 10px;
     border-radius: 2px;
     gap: 30px;
-    flex-grow: 1;
+}
+
+#todo img {
+    width: fit-content;
 }
 
 #timer-container {

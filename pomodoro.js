@@ -59,7 +59,6 @@ function updateClock(){
                     currentState = STATE.SHORT_BREAK;
                     [minutesLeft, secondsLeft] = (STATE.SHORT_BREAK).split(":");
                 }
-                flashTimerIdInterval = setInterval(flashTimer, 250);
 
                 italicContainer.textContent = "RELAX";
                 italicContainer.style.color = 'rgb(127, 165, 255)';
@@ -73,6 +72,7 @@ function updateClock(){
                 italicContainer.style.color = 'red';
             }
 
+            flashTimerIdInterval = setInterval(flashTimer, 250);
             img.src = TRAFFIC_LIGHT.RED;
 
             displayTime(minutesLeft, secondsLeft);
