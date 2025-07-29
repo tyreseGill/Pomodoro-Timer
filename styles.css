@@ -5,7 +5,6 @@
 header {
     background-color: antiquewhite;
     margin-bottom: 10px;
-    padding: 5px;
     border-top: gray solid 3px;
     border-bottom: gray solid 3px;
 }
@@ -20,6 +19,7 @@ main {
 
 h1 {
     text-align: center;
+    margin: 5px;
 }
 
 button {

@@ -11,9 +11,9 @@ const videoTvScreen = document.querySelector("#video-screen");
 
 // TODO: Setting same time for each distinct state prevents change of state due to equality
 const STATE = {
-    "STUDYING": "0:03",
-    "SHORT_BREAK": "0:02",
-    "LONG_BREAK": "0:01"
+    "STUDYING": "25:00",
+    "SHORT_BREAK": "5:00",
+    "LONG_BREAK": "30:00"
 }
 
 const TRAFFIC_LIGHT = {
