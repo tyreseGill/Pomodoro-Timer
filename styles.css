@@ -2,11 +2,17 @@
     border: red solid 2px;
 } */
 
+body {
+    /* background-color: linear-gradient(top, 'navy blue', 'spring green'); */
+    /* background-color: linear-gradient(to top left, #a5b8d6, white); */
+    background-image: linear-gradient(to top, cornflowerblue, springgreen);
+}
+
 header {
     background-color: antiquewhite;
     margin-bottom: 10px;
-    border-top: gray solid 3px;
-    border-bottom: gray solid 3px;
+    border-top: grey solid 3px;
+    border-bottom: grey solid 3px;
 }
 
 main {
@@ -20,6 +26,10 @@ main {
 h1 {
     text-align: center;
     margin: 5px;
+}
+
+hr {
+    margin-bottom: 27.5px;
 }
 
 button {
@@ -67,9 +77,13 @@ button {
     font-size: 5rem;
 }
 
+#session-text-area {
+    margin: 5px;
+}
+
 #todo {
     display: flex;
-    border: 5px solid grey;
+    border: 3px solid grey;
     background-color: antiquewhite;
     height: 100%;
     margin: 20px;
@@ -80,6 +94,7 @@ button {
 
 #todo img {
     width: fit-content;
+    margin: 10px;
 }
 
 #timer-container {
@@ -176,26 +191,43 @@ button {
     display: flex;
     gap: 5px;
     margin-bottom: 15px;
+    border: grey solid 3px;
+    border-radius: 20px;
+    padding: 10px;
+    background-color: white;
 }
-    
+
+#searchbar input {
+    background-color: azure;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 #playlist-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 400px;
+    min-height: 425px;
+    border: grey solid 3px;
+    border-radius: 5px;
+    background-color: antiquewhite;
+    padding: 5px;
 }
 
 #no-video-text {
-    width: 300px;
+    /* width: 300px; */
+    /* height: 225px; */
     padding: 10px;
-    border: 2px solid gray;
+    border: 2px solid grey;
     border-radius: 10px;
     margin: 20px;
+    background-color: white;
 }
+
 
 #queue {
     width: 300px;
-    gap: 0;
 }
 
 #queue img {
@@ -203,9 +235,6 @@ button {
     padding: 10px;
 }
 
-#video-screen {
-    /* background-color: aqua; */
-}
 /* 
 #transition-screen {
     object-fit: cover;
