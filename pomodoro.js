@@ -27,7 +27,7 @@ let timeStopped = true;
 let currentState = STATE.STUDYING;
 let [minutesLeft, secondsLeft] = currentState.split(":");
 let alarmTimerIdInterval = null;
-let colorToggleGrey = true;
+let colorToggleGrey = false;
 let videoThumbnails = [];
 let musicToBePlayed = [];
 
@@ -129,6 +129,70 @@ function toggleMute(){
     staticTvScreen.muted = !staticTvScreen.muted;
 }
 
+function updateVideoQueue(addedThumbnail=null){
+    firstVideo = videoThumbnails[0];
+    lastVideoAdded = videoThumbnails[videoThumbnails.length - 1];
+    newVideoBeingAdded = addedThumbnail;
+    // Adding a Thumbnail to the queue
+    if (addedThumbnail){
+        // First video to be added to queue
+        if (videoThumbnails.length === 0){
+            addedThumbnail.style.borderRadius = "10px";
+        }
+        else {
+            firstVideo.style.borderRadius = "10px 10px 0 0";
+            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
+            if (videoThumbnails.length > 1){
+                lastVideoAdded.style.borderRadius = "0";
+            }
+        }
+    }
+    // Removing a Thumbnail from the queue
+    else {
+
+        colorToggleGrey = false;
+        videoThumbnails.forEach((img) => {
+            img.style.backgroundColor = toggleVideoBackgroundColor();
+        })
+        // Rounds the borders of the single video present
+        if (videoThumbnails.length === 1){
+            firstVideo.style.borderRadius = "10px";
+        }
+        // Rounds top and bottom of the borders of the first and last videos
+        else if (videoThumbnails.length > 1) {
+            firstVideo.style.borderRadius = "10px 10px 0 0";
+            lastVideoAdded.style.borderRadius = "0 0 10px 10px";
+        }
+
+    }
+}
+
+function toggleVideoBackgroundColor(addedThumbnail=null) {
+    colorToggleGrey = !colorToggleGrey;
+    return colorToggleGrey ? "#e3e2de" : "#b8b6b2";
+} 
+
+function addToVideoQueue(thumbnailLink){
+    let addedThumbnail = document.createElement("img");
+
+    addedThumbnail.setAttribute('width', '300');
+    addedThumbnail.setAttribute('src', thumbnailLink);
+
+    document.querySelector("#queue").appendChild(addedThumbnail);
+    addedThumbnail.textContent = embedLink;
+    addedThumbnail.style.backgroundColor = toggleVideoBackgroundColor();
+
+    updateVideoQueue(addedThumbnail);
+
+    videoThumbnails.push(addedThumbnail);
+}
+
+function removeFromVideoQueue(){
+    videoToBeRemoved = videoThumbnails.shift();
+    videoToBeRemoved.remove();
+    updateVideoQueue();
+}
+
 function toggleTV(tvState){
     // OFF to static
     if (tvState === tvScreen){
@@ -141,7 +205,9 @@ function toggleTV(tvState){
         if (musicToBePlayed.length != 0){
             videoTvScreen.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
             videoTvScreen.setAttribute("src", musicToBePlayed.shift());
-            videoThumbnails[0].remove();
+
+            removeFromVideoQueue();
+
             videoTvScreen.classList.toggle("hidden");
         }
         else {
@@ -228,40 +294,7 @@ addMusicBtn.addEventListener('click', () => {
             placeholder.remove();
         }
 
-        let addedThumbnail = document.createElement("img");
-
-        addedThumbnail.setAttribute('width', '300');
-        addedThumbnail.setAttribute('src', thumbnailLink);
-
-        document.querySelector("#queue").appendChild(addedThumbnail);
-        addedThumbnail.textContent = embedLink;
-        if (colorToggleGrey){
-            addedThumbnail.style.backgroundColor = "#e3e2de";
-        }
-        else {
-            addedThumbnail.style.backgroundColor = "#b8b6b2";
-        }
-
-        colorToggleGrey = !colorToggleGrey;
-
-        firstVideo = videoThumbnails[0];
-        lastVideoAdded = null;
-        newVideoBeingAdded = addedThumbnail;
-        if (videoThumbnails.length === 0){
-            addedThumbnail.style.borderRadius = "10px";
-        }
-        else if (videoThumbnails.length === 1){
-            firstVideo.style.borderRadius = "10px 10px 0 0";
-            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
-        }
-        else {
-            lastVideoAdded = videoThumbnails[videoThumbnails.length - 1];
-            lastVideoAdded.style.borderRadius = "0";
-            firstVideo.style.borderRadius = "10px 10px 0 0";
-            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
-        }
-
-        videoThumbnails.push(addedThumbnail);
+        addToVideoQueue(thumbnailLink);
     }
     else{
         alert("You input an invalid URL. Please copy/paste a valid URL to a YouTube video.");
