@@ -23,6 +23,7 @@ const TRAFFIC_LIGHT = {
     "RED": 'images/traffic-lights/64px-Traffic_lights_dark_red.svg.png'
 }
 
+let timeoutId;
 let numPomodoros = 0;
 let timeStopped = true;
 let currentState = STATE.STUDYING;
@@ -31,6 +32,7 @@ let alarmTimerIdInterval = null;
 let colorToggleGrey = false;
 let videoThumbnails = [];
 let musicToBePlayed = [];
+let videoDurations = [];
 
 (() => {
     let screen = document.querySelector("#static-tv-screen");
@@ -194,6 +196,46 @@ function removeFromVideoQueue(){
     updateVideoQueue();
 }
 
+
+// function scheduleNextVideo(){
+//     if (timeoutId){
+//         clearTimeout(timeoutId);
+//     }
+//     timeoutId = setInterval( () => {
+//         nextVideo();
+//     }, (totalSeconds * 1_000));
+// }
+
+function scheduleNextVideo(){
+    newVideoDurationSecs = videoDurations.shift();
+    // if (timeoutIds.length >= 1){
+    //     oldTimeoutId = timeoutIds.shift();
+    //     clearTimeout(oldTimeoutId);
+    // }
+    if (newVideoDurationSecs){
+        timeoutId = setTimeout( () => {
+            nextVideo();
+        }, newVideoDurationSecs * 1_000);
+    }
+}
+
+
+// function scheduleNextVideo(totalSeconds) {
+//     // Clear any existing timeouts
+//     // for (const id of timeoutIds) {
+//     //     clearTimeout(id);
+//     // }
+//     // timeoutIds = [];
+
+//     // Schedule the next video
+//     const newTimeoutId = setTimeout(() => {
+//         nextVideo();
+//     }, totalSeconds * 1000);
+
+//     timeoutIds.push(newTimeoutId);
+// }
+
+
 function nextVideo(){
     if (musicToBePlayed.length != 0){
         tvScreen.classList.toggle("hidden");
@@ -207,6 +249,10 @@ function nextVideo(){
         audio.addEventListener("ended", () => {
             colorBarsScreen.classList.toggle("hidden");
             tvScreen.classList.toggle("hidden");
+        
+        // TODO: Rewrite to address each video
+
+        scheduleNextVideo();
         })  
     }
 }
@@ -303,6 +349,33 @@ addMusicBtn.addEventListener('click', () => {
     searchBar.value = "";
 
     if (isValidUrl){
+        videoDurationInput = prompt("Optional: Input the duration of the video you want to play. Otherwise you'll have to actively click the ⏩ to move on to the next video:");
+        if (videoDurationInput){
+            numTimeUnits = videoDurationInput.split(":").length;
+            let hours = null;
+            let minutes = null;
+            let seconds = null;
+            if (numTimeUnits === 3){
+                [hours, minutes, seconds] = videoDurationInput.split(":");
+            }
+            else if (numTimeUnits === 2) {
+                [minutes, seconds] = videoDurationInput.split(":");
+            }
+            else {
+                seconds = videoDurationInput;
+            }
+            hours = hours ? parseInt(hours, 10) : 0;
+            minutes = minutes ? parseInt(minutes, 10) : 0;
+            seconds = seconds ? parseInt(seconds, 10) : 0;
+            // Extra 30 seconds act as grace to play/stop video
+            totalSeconds = (hours * 3600) + (minutes * 60) + seconds + 0;
+            videoDurations.push(totalSeconds);
+            // TODO: Need to make dictionary/array to associate with each video
+        }
+        else {
+            videoDurations.push(null);
+        }
+
         embedLink = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1`;
         thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 
