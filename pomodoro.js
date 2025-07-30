@@ -7,6 +7,7 @@ const tvScreen = document.querySelector("#click-overlay");
 const placeholder = document.querySelector("#no-video-text");
 const addMusicBtn = document.querySelector("#add-music-button");
 const staticTvScreen = document.querySelector("#static-tv-screen");
+const colorBarsScreen = document.querySelector("#transition-screen");
 const videoTvScreen = document.querySelector("#video-screen");
 const searchBar = document.querySelector("input[type='search']");
 
@@ -193,6 +194,23 @@ function removeFromVideoQueue(){
     updateVideoQueue();
 }
 
+function nextVideo(){
+    if (musicToBePlayed.length != 0){
+        tvScreen.classList.toggle("hidden");
+        videoTvScreen.setAttribute("src", musicToBePlayed.shift());
+        removeFromVideoQueue();
+        const audio = new Audio("audio/censor-beep-1-372459.mp3");
+        // videoTvScreen.classList.toggle("hidden");
+        colorBarsScreen.classList.toggle("hidden");
+        audio.play();
+        // colorBarsScreen.classList.toggle("hidden");
+        audio.addEventListener("ended", () => {
+            colorBarsScreen.classList.toggle("hidden");
+            tvScreen.classList.toggle("hidden");
+        })  
+    }
+}
+
 function toggleTV(tvState){
     // OFF to static
     if (tvState === tvScreen){
@@ -204,14 +222,14 @@ function toggleTV(tvState){
         staticTvScreen.classList.toggle("hidden");
         if (musicToBePlayed.length != 0){
             videoTvScreen.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
-            videoTvScreen.setAttribute("src", musicToBePlayed.shift());
-
-            removeFromVideoQueue();
+            nextVideo();
 
             videoTvScreen.classList.toggle("hidden");
         }
         else {
-            tvScreen.classList.toggle("hidden");
+            // videoTvScreen.classList.toggle("hidden");
+            // tvScreen.classList.toggle("hidden");
+            // colorBarsScreen.classList.toggle("hidden");
         }
     }
     // Video to next video or OFF
@@ -280,12 +298,12 @@ tvScreen.addEventListener('click', () => {
 addMusicBtn.addEventListener('click', () => {
     url = searchBar.value;
     videoId = url.match(/(?<=\?v=)[^&]+/)
-    isValidUrl = url.startsWith("https://www.youtube.com") && videoId;
+    isValidUrl = (url.startsWith("www.youtube.com") || url.startsWith("https://www.youtube.com")) && videoId;
 
     searchBar.value = "";
 
     if (isValidUrl){
-        embedLink = `https://www.youtube.com/embed/${videoId}`;
+        embedLink = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1`;
         thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 
         musicToBePlayed.push(embedLink);
