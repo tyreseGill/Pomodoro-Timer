@@ -203,7 +203,7 @@ button {
     border-radius: 5px;
 }
 
-#playlist-section {
+#study-playlist-section {
     display: flex;
     flex-direction: column;
     align-items: center;

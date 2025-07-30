@@ -10,6 +10,7 @@ const staticTvScreen = document.querySelector("#static-tv-screen");
 const colorBarsScreen = document.querySelector("#transition-screen");
 const videoTvScreen = document.querySelector("#video-screen");
 const searchBar = document.querySelector("input[type='search']");
+const nextVidBtn = document.querySelector("#nextVidBtn");
 
 const STATE = {
     "STUDYING": "25:00",
@@ -33,6 +34,7 @@ let colorToggleGrey = false;
 let videoThumbnails = [];
 let musicToBePlayed = [];
 let videoDurations = [];
+let videoPlayed = false;
 
 (() => {
     let screen = document.querySelector("#static-tv-screen");
@@ -47,7 +49,6 @@ function updateClock(){
         img.src = TRAFFIC_LIGHT.YELLOW;
     }
     
-
     // Stops timer to play alarm after each session
     if (minutesLeft == 0 && secondsLeft == 0){
         const audio = new Audio('audio/Beep_alarm_clock.ogg');
@@ -152,7 +153,6 @@ function updateVideoQueue(addedThumbnail=null){
     }
     // Removing a Thumbnail from the queue
     else {
-
         colorToggleGrey = false;
         videoThumbnails.forEach((img) => {
             img.style.backgroundColor = toggleVideoBackgroundColor();
@@ -197,21 +197,9 @@ function removeFromVideoQueue(){
 }
 
 
-// function scheduleNextVideo(){
-//     if (timeoutId){
-//         clearTimeout(timeoutId);
-//     }
-//     timeoutId = setInterval( () => {
-//         nextVideo();
-//     }, (totalSeconds * 1_000));
-// }
 
 function scheduleNextVideo(){
     newVideoDurationSecs = videoDurations.shift();
-    // if (timeoutIds.length >= 1){
-    //     oldTimeoutId = timeoutIds.shift();
-    //     clearTimeout(oldTimeoutId);
-    // }
     if (newVideoDurationSecs){
         timeoutId = setTimeout( () => {
             nextVideo();
@@ -219,41 +207,29 @@ function scheduleNextVideo(){
     }
 }
 
-
-// function scheduleNextVideo(totalSeconds) {
-//     // Clear any existing timeouts
-//     // for (const id of timeoutIds) {
-//     //     clearTimeout(id);
-//     // }
-//     // timeoutIds = [];
-
-//     // Schedule the next video
-//     const newTimeoutId = setTimeout(() => {
-//         nextVideo();
-//     }, totalSeconds * 1000);
-
-//     timeoutIds.push(newTimeoutId);
-// }
-
-
 function nextVideo(){
     if (musicToBePlayed.length != 0){
-        tvScreen.classList.toggle("hidden");
+
+        if (musicToBePlayed.length === 1){
+            nextVidBtn.disabled = true;
+        }
+
+        toggleTV(tvScreen);
         videoTvScreen.setAttribute("src", musicToBePlayed.shift());
         removeFromVideoQueue();
+        videoPlayed = true;
         const audio = new Audio("audio/censor-beep-1-372459.mp3");
-        // videoTvScreen.classList.toggle("hidden");
         colorBarsScreen.classList.toggle("hidden");
         audio.play();
-        // colorBarsScreen.classList.toggle("hidden");
         audio.addEventListener("ended", () => {
             colorBarsScreen.classList.toggle("hidden");
-            tvScreen.classList.toggle("hidden");
-        
-        // TODO: Rewrite to address each video
-
+            toggleTV(tvScreen);
         scheduleNextVideo();
-        })  
+        })
+        
+    }
+    else {
+        toggleTV(staticTvScreen);
     }
 }
 
@@ -265,23 +241,21 @@ function toggleTV(tvState){
     }
     // Static to Video or OFF
     else if (tvState === staticTvScreen){
-        staticTvScreen.classList.toggle("hidden");
         if (musicToBePlayed.length != 0){
+            staticTvScreen.classList.toggle("hidden");
             videoTvScreen.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
             nextVideo();
-
             videoTvScreen.classList.toggle("hidden");
         }
         else {
-            // videoTvScreen.classList.toggle("hidden");
-            // tvScreen.classList.toggle("hidden");
-            // colorBarsScreen.classList.toggle("hidden");
+            toggleTV(tvScreen);
+            
+            alert("No videos to be played!");
         }
     }
     // Video to next video or OFF
     else {
         if (musicToBePlayed){
-            // staticTvScreen.classList.toggle("hidden");
             videoTvScreen.classList.toggle("hidden");
         }
         else {
@@ -322,8 +296,6 @@ button.addEventListener('click', () => {
 
 tvScreen.addEventListener('click', () => {
     let remoteImg = document.createElement("img")
-
-    toggleMute();
 
     remoteImg.style.position = 'absolute';
     remoteImg.style.top = '10px';
@@ -370,7 +342,6 @@ addMusicBtn.addEventListener('click', () => {
             // Extra 30 seconds act as grace to play/stop video
             totalSeconds = (hours * 3600) + (minutes * 60) + seconds + 0;
             videoDurations.push(totalSeconds);
-            // TODO: Need to make dictionary/array to associate with each video
         }
         else {
             videoDurations.push(null);
@@ -386,6 +357,11 @@ addMusicBtn.addEventListener('click', () => {
         }
 
         addToVideoQueue(thumbnailLink);
+
+        // Makes nextVidBtn clickable
+        if (videoPlayed){
+            nextVidBtn.disabled = false;
+        }
     }
     else{
         alert("You input an invalid URL. Please copy/paste a valid URL to a YouTube video.");
@@ -398,4 +374,6 @@ staticTvScreen.addEventListener("click", () => {
     toggleMute();
 });
 
-// videoTvScreen.addEventListener("click", toggleTV);
+tvScreen.addEventListener("click", () => {
+    toggleMute();
+})

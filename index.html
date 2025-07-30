@@ -32,7 +32,7 @@
                 </div>
                 <img id="todo-image" src="images/traffic-lights/64px-Traffic_lights_dark_red.svg.png">
             </div>
-            <button onclick="nextVideo()" class="clickable">
+            <button id="nextVidBtn" disabled onclick="nextVideo()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" width="20px" stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
                 </svg>
@@ -41,7 +41,6 @@
 
         <div id="tv-container">
             <img src="images/cartoon/TV-icon-2.svg" id="tv-set">
-            <!-- <iframe id="video-screen" class="hidden clickable" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
             <iframe id="video-screen" class="hidden clickable" title="YouTube video player" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" modestbranding=1 allowfullscreen controls="0"></iframe>
             <video muted autoplay loop playsinline id="static-tv-screen" class="hidden clickable">
                 <source src="video/Static_with_white_noise.webm" type="video/webm">
@@ -54,7 +53,7 @@
 
         <hr style="width:80%; ">
 
-        <div id="playlist-section">
+        <div id="study-playlist-section">
             <h2>Compile your Personal Playlist to Study to!</h2>
             <div id="searchbar">
                 <svg id="add-music-button" class="clickable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" height="35px">
