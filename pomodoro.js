@@ -10,13 +10,11 @@ const tvStatic = document.querySelector("#static-tv-screen");
 const tvInterrupt = document.querySelector("#transition-screen");
 const tvVideo = document.querySelector("#video-screen");
 
-
 const placeholderStudy = document.querySelector("#no-video-text-1");
 const placeholderBreak = document.querySelector("#no-video-text-2");
 
 const addStudyMusicBtn = document.querySelector("#add-music-button-1");
 const addBreakVideoBtn = document.querySelector("#add-music-button-2");
-// const addMusicBtns = document.querySelectorAll(".add-music-button");
 
 const searchbarStudy = document.querySelector("#url-container-1");
 const searchbarBreak = document.querySelector("#url-container-2");
@@ -54,6 +52,77 @@ let videosToBePlayedBreak = [];
 
 let videoDurationsStudy = [];
 let videoDurationsBreak = [];
+
+studyTitles = [ 
+    '🎧 Beats to Study To',
+    '🔬 Focus Mode: ON',
+    '💻 Deep Work Vibes',
+    'Ambient Study Sessions',
+    'Lo-fi for the Laser-Focused',
+    '⛽ Fuel for the Flow State',
+    '🧩 Concentration Companion',
+    '🕵️ Stay Sharp, Study Smart',
+    '🔒 Locked In and Learning',
+    '🎼 Background Beats for Brilliance',
+    '📚 Study With Me',
+    '🛤️ Tunnel Vision Tracks',
+    '🪐 Productivity Orbit',
+    '🚀 Brain Boost Audio',
+    '📖 Read, Write, Repeat',
+    '💪 Quietly Crushing It',
+    '✨ Mental Clarity Mode',
+    '🏃‍➡️ Chase the Goal',
+    '🧗 Climb Your Way to Focus',
+    '⛹️ Bounce Back Break Beats',
+    '🏋️ Heavy Focus, Light Distractions',
+    '🪡 Thread the Needle: Precision Work Mode',
+    '🥇 Gold Medal Grind',
+    '🎯 Locked on the Target',
+    '📈 Level Up Your Study Game',
+    '⌛ Beat the Clock: Timed Focus Sessions'
+ ];
+breakTitles = [
+    '☺️ Videos to Relax To',
+    '⏸️ Pause & Unwind',
+    '✋ Take Five',
+    '🧘 Mindful Moments',
+    '☕ Time to Breathe',
+    "🌿 Nature's Intermission",
+    '🌅 Soothing Escapes',
+    '🧠 Reset Your Mind',
+    '🪷 Calm Between the Chaos',
+    '🎨 The Art of Doing Nothing',
+    '🌴 Peaceful Interludes',
+    '💤 Time for a Mental Reset',
+    '🧘 Your Daily Zen',
+    '🫖 Break-Time Bliss',
+    '🕯️ Relax Mode Activated',
+    '🧊 Cool Down Time',
+    '😴 Nap-Worthy Vibes',
+    '🛌 Lo-fi for Lying Low',
+    '⏸️ Pause. Breathe. Reset.',
+    '🏖️ Sonic Getaway: Beachside Breaks',
+    '🌙 Moonlight Melodies',
+    '🌸 Petal-Soft Study Breaks',
+    '🌊 TideTunes: Flow & Focus',
+    '🌤️ Clear Skies, Clear Mind',
+    '🍵 Steeped in Stillness',
+    '🔮 Chill Visions: Relax and Drift',
+    '🍿 Popcorn Pause: Quick Flicks for Breaks',
+    '🎬 Mini Movie Moments',
+    '📺 TV Timeout: Chill & Watch',
+    '🎮 Game Break: Button Mashing & Brain Rest',
+    '🕹️ Pixel Pause: Retro Vibes & Relaxation'
+];
+
+randomNumber = Math.random();
+let randomBreakPlaylistTitle = breakTitles[Math.floor(randomNumber * (breakTitles.length + 1))];
+randomNumber = Math.random();
+let randomStudyPlaylistTitle = studyTitles[Math.floor(randomNumber * (studyTitles.length + 1))];
+
+document.querySelector("#break-playlist-title").textContent = randomBreakPlaylistTitle;
+document.querySelector("#study-playlist-title").textContent = randomStudyPlaylistTitle;
+
 
 // Lowers volume of static video
 (() => {
