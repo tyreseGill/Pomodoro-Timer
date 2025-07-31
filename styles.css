@@ -36,6 +36,10 @@ button {
     margin: 10px;
 }
 
+footer {
+    margin-top: 100px;
+}
+
 .hidden {
     visibility: hidden;
 }
@@ -46,6 +50,13 @@ button {
 
 #italic-word {
     font-size: 2em;
+}
+
+#study-playlist-title, #break-playlist-title {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 325px;
 }
 
 #clock {
@@ -203,6 +214,14 @@ button {
     border-radius: 5px;
 }
 
+#playlist-container {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
 #study-playlist-section, #break-playlist-section {
     display: flex;
     flex-direction: column;
@@ -224,7 +243,7 @@ button {
     /* display: none; */ /* NOTE: Change once this playlist is functional, should pop up after study playlist is populated */
 }
 
-#no-video-text {
+.no-video-text {
     /* width: 300px; */
     /* height: 225px; */
     padding: 10px;

@@ -382,7 +382,6 @@ function nextVideo(){
             currentTvState = tvVideo;
         scheduleNextVideo();
         })
-        
     }
     else {
         toggleTv(tvStatic);
@@ -390,7 +389,7 @@ function nextVideo(){
 }
 
 function toggleTv(tvState){
-    let { playlist } = getCurrentPlaylistVariables();
+    let { mode, playlist } = getCurrentPlaylistVariables();
     // OFF to static
     if (tvState === tvOff){
         tvOff.classList.toggle("hidden");
@@ -411,7 +410,7 @@ function toggleTv(tvState){
         else {
             toggleTv(tvOff);
             currentTvState = tvOff;
-            alert("No videos to be played!");
+            alert(`No videos to be played! Add some to the ${mode} playlist!`);
         }
     }
     // Video to next video or OFF
@@ -421,7 +420,7 @@ function toggleTv(tvState){
             currentTvState = tvVideo;
         }
         else {
-            alert("No videos to be played!");
+            alert(`No videos to be played! Add some to your ${mode} playlist!`);
         }
     }
 }
