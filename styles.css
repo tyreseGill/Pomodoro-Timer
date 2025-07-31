@@ -105,7 +105,7 @@ button {
     overflow: hidden;
 }
 
-#click-overlay, #static-tv-screen, #video-screen {
+#tv-off-screen, #static-tv-screen, #video-screen {
     overflow: hidden;
 }
 
@@ -118,7 +118,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #static-tv-screen, #video-screen {
+    #tv-off-screen, #static-tv-screen, #video-screen {
         /* 340, 420 */
         height: 340px; 
         width: 420px;
@@ -129,7 +129,7 @@ button {
         border-radius: 40px;
     }
 
-    #click-overlay {
+    #tv-off-screen {
         background: linear-gradient(to top left, #a5b8d6, white);
         height: 340px;
     }
@@ -148,7 +148,7 @@ button {
         align-items: center;
     }
 
-    #click-overlay, #static-tv-screen, #video-screen {
+    #tv-off-screen, #static-tv-screen, #video-screen {
         height: 220px;
         margin-left: 27px;
         margin-bottom: 7px;
@@ -166,7 +166,7 @@ button {
         transform-origin: -45% -35%;
     }
 
-    #click-overlay {
+    #tv-off-screen {
         background: linear-gradient(to top left, #a5b8d6, white);
         height: 220px;
         width: 267px;
@@ -178,7 +178,7 @@ button {
     overflow: hidden;
 }
 
-#click-overlay, #static-tv-screen, #click-overlay, #video-screen, #transition-screen {
+#tv-off-screen, #static-tv-screen, #tv-off-screen, #video-screen, #transition-screen {
     border: rgb(96, 96, 96) solid 2px;
 }
 
@@ -186,7 +186,7 @@ button {
     width: 100%
 }
 
-#searchbar {
+.searchbar {
     object-fit: fill;
     display: flex;
     gap: 5px;
@@ -197,13 +197,13 @@ button {
     background-color: white;
 }
 
-#searchbar input {
+.searchbar input {
     background-color: azure;
     padding: 10px;
     border-radius: 5px;
 }
 
-#study-playlist-section {
+#study-playlist-section, #break-playlist-section {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -211,8 +211,17 @@ button {
     min-height: 425px;
     border: grey solid 3px;
     border-radius: 5px;
-    background-color: antiquewhite;
+    /* background-color: antiquewhite; */
     padding: 5px;
+}
+
+#study-playlist-section {
+    background-color: yellowgreen;
+}
+
+#break-playlist-section {
+    background-color: lavender;
+    /* display: none; */ /* NOTE: Change once this playlist is functional, should pop up after study playlist is populated */
 }
 
 #no-video-text {
@@ -226,11 +235,11 @@ button {
 }
 
 
-#queue {
+.queue {
     width: 300px;
 }
 
-#queue img {
+.queue img {
     margin: 0;
     padding: 10px;
 }

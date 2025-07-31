@@ -1,19 +1,31 @@
 
 const timeDisplay = document.querySelector("#display-time");
 const italicContainer = document.querySelector("#italic-word");
-const button = document.querySelector('button');
+const startPauseTimerBtn = document.querySelector('#timer-button');
 const img = document.querySelector("#todo-image");
-const tvScreen = document.querySelector("#click-overlay");
-const placeholder = document.querySelector("#no-video-text");
-const addMusicBtn = document.querySelector("#add-music-button");
-const staticTvScreen = document.querySelector("#static-tv-screen");
-const colorBarsScreen = document.querySelector("#transition-screen");
-const videoTvScreen = document.querySelector("#video-screen");
-const searchBar = document.querySelector("input[type='search']");
 const nextVidBtn = document.querySelector("#nextVidBtn");
 
+const tvOff = document.querySelector("#tv-off-screen");
+const tvStatic = document.querySelector("#static-tv-screen");
+const tvInterrupt = document.querySelector("#transition-screen");
+const tvVideo = document.querySelector("#video-screen");
+
+
+const placeholderStudy = document.querySelector("#no-video-text-1");
+const placeholderBreak = document.querySelector("#no-video-text-2");
+
+const addStudyMusicBtn = document.querySelector("#add-music-button-1");
+const addBreakVideoBtn = document.querySelector("#add-music-button-2");
+// const addMusicBtns = document.querySelectorAll(".add-music-button");
+
+const searchbarStudy = document.querySelector("#url-container-1");
+const searchbarBreak = document.querySelector("#url-container-2");
+
+const studyQueue = document.querySelector("#study-queue");
+const breakQueue = document.querySelector("#break-queue");
+
 const STATE = {
-    "STUDYING": "25:00",
+    "STUDYING": "00:00",
     "SHORT_BREAK": "5:00",
     "LONG_BREAK": "30:00"
 }
@@ -26,23 +38,31 @@ const TRAFFIC_LIGHT = {
 
 let timeoutId;
 let numPomodoros = 0;
-let timeStopped = true;
-let currentState = STATE.STUDYING;
-let [minutesLeft, secondsLeft] = currentState.split(":");
 let alarmTimerIdInterval = null;
 let colorToggleGrey = false;
-let videoThumbnails = [];
-let musicToBePlayed = [];
-let videoDurations = [];
 let videoPlayed = false;
+let timeStopped = true;
+let currentTimerState = STATE.STUDYING;
+let currentTvState = tvOff;
+let [minutesLeft, secondsLeft] = currentTimerState.split(":");
 
+let videoThumbnailsStudy = [];
+let videoThumbnailsBreak = [];
+
+let musicToBePlayedStudy = [];
+let videosToBePlayedBreak = [];
+
+let videoDurationsStudy = [];
+let videoDurationsBreak = [];
+
+// Lowers volume of static video
 (() => {
     let screen = document.querySelector("#static-tv-screen");
     screen.volume = 0.1;
 })();
 
 function updateClock(){
-    [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentState.split(":");
+    [minutesLeftCurrentSession, secondsLeftCurrentSession] = currentTimerState.split(":");
 
     // Indicates less than 1 minute before alarm
     if (minutesLeft == 0){
@@ -56,26 +76,30 @@ function updateClock(){
 
         audio.addEventListener('playing', () => {
             // Wrapping up study session
-            if (currentState === STATE.STUDYING){
+            document.body.classList.toggle("relax");
+
+            if (currentTimerState === STATE.STUDYING){
                 ++numPomodoros;
 
                 // Award longer break after 4 study sessions
                 if (numPomodoros % 4 === 0){
-                    currentState = STATE.LONG_BREAK;
+                    currentTimerState = STATE.LONG_BREAK;
                     [minutesLeft, secondsLeft] = (STATE.LONG_BREAK).split(":");
                 }
                 else {
-                    currentState = STATE.SHORT_BREAK;
+                    currentTimerState = STATE.SHORT_BREAK;
                     [minutesLeft, secondsLeft] = (STATE.SHORT_BREAK).split(":");
                 }
 
                 italicContainer.textContent = "RELAX";
                 italicContainer.style.color = 'rgb(127, 165, 255)';
+
+                updateSkipButton();
             }
 
             // Wrapping up break session
             else {
-                currentState = STATE.STUDYING;
+                currentTimerState = STATE.STUDYING;
                 [minutesLeft, secondsLeft] = (STATE.STUDYING).split(":");
                 italicContainer.textContent = "STUDY";
                 italicContainer.style.color = 'red';
@@ -130,23 +154,24 @@ function flashTimer(){
 }
 
 function toggleMute(){
-    staticTvScreen.muted = !staticTvScreen.muted;
+    tvStatic.muted = !tvStatic.muted;
 }
 
 function updateVideoQueue(addedThumbnail=null){
-    firstVideo = videoThumbnails[0];
-    lastVideoAdded = videoThumbnails[videoThumbnails.length - 1];
+    let { thumbnails } = getCurrentPlaylistVariables();
+    firstVideo = thumbnails[0];
+    lastVideoAdded = thumbnails[thumbnails.length - 1];
     newVideoBeingAdded = addedThumbnail;
     // Adding a Thumbnail to the queue
     if (addedThumbnail){
         // First video to be added to queue
-        if (videoThumbnails.length === 0){
+        if (thumbnails.length === 0){
             addedThumbnail.style.borderRadius = "10px";
         }
         else {
             firstVideo.style.borderRadius = "10px 10px 0 0";
             newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
-            if (videoThumbnails.length > 1){
+            if (thumbnails.length > 1){
                 lastVideoAdded.style.borderRadius = "0";
             }
         }
@@ -154,19 +179,18 @@ function updateVideoQueue(addedThumbnail=null){
     // Removing a Thumbnail from the queue
     else {
         colorToggleGrey = false;
-        videoThumbnails.forEach((img) => {
+        thumbnails.forEach((img) => {
             img.style.backgroundColor = toggleVideoBackgroundColor();
         })
         // Rounds the borders of the single video present
-        if (videoThumbnails.length === 1){
+        if (thumbnails.length === 1){
             firstVideo.style.borderRadius = "10px";
         }
         // Rounds top and bottom of the borders of the first and last videos
-        else if (videoThumbnails.length > 1) {
+        else if (thumbnails.length > 1) {
             firstVideo.style.borderRadius = "10px 10px 0 0";
             lastVideoAdded.style.borderRadius = "0 0 10px 10px";
         }
-
     }
 }
 
@@ -175,23 +199,25 @@ function toggleVideoBackgroundColor(addedThumbnail=null) {
     return colorToggleGrey ? "#e3e2de" : "#b8b6b2";
 } 
 
-function addToVideoQueue(thumbnailLink){
+function addToVideoQueue(queueToAddMusicTo, thumbnailLink){
+    let {thumbnails, queue} = getPlaylistVariables(queueToAddMusicTo);
+
     let addedThumbnail = document.createElement("img");
 
     addedThumbnail.setAttribute('width', '300');
     addedThumbnail.setAttribute('src', thumbnailLink);
 
-    document.querySelector("#queue").appendChild(addedThumbnail);
+    queue.appendChild(addedThumbnail);
     addedThumbnail.textContent = embedLink;
     addedThumbnail.style.backgroundColor = toggleVideoBackgroundColor();
 
     updateVideoQueue(addedThumbnail);
-
-    videoThumbnails.push(addedThumbnail);
+    thumbnails.push(addedThumbnail);
 }
 
 function removeFromVideoQueue(){
-    videoToBeRemoved = videoThumbnails.shift();
+    let { thumbnails } = getCurrentPlaylistVariables();
+    videoToBeRemoved = thumbnails.shift();
     videoToBeRemoved.remove();
     updateVideoQueue();
 }
@@ -199,7 +225,8 @@ function removeFromVideoQueue(){
 
 
 function scheduleNextVideo(){
-    newVideoDurationSecs = videoDurations.shift();
+    let { durations } = getCurrentPlaylistVariables();
+    newVideoDurationSecs = durations.shift();
     if (newVideoDurationSecs){
         timeoutId = setTimeout( () => {
             nextVideo();
@@ -207,56 +234,122 @@ function scheduleNextVideo(){
     }
 }
 
+function getCurrentPlaylistVariables(){
+    if (currentTimerState === STATE.STUDYING){
+        return {
+            thumbnails: videoThumbnailsStudy,
+            playlist: musicToBePlayedStudy,
+            durations: videoDurationsStudy,
+            placeholder: placeholderStudy,
+            searchbar: searchbarStudy,
+            queue: studyQueue,
+            mode: "study"  // To be used
+        };
+    }
+    else {
+        return {
+            thumbnails: videoThumbnailsBreak,
+            playlist: videosToBePlayedBreak,
+            durations: videoDurationsBreak,
+            placeholder: placeholderBreak,
+            searchbar: searchbarStudy,
+            queue: breakQueue,
+            mode: "break"  // To be used
+        };
+    }
+}
+
+
+function getPlaylistVariables(queueBeingEdited){
+    if (queueBeingEdited === studyQueue){
+        return {
+            thumbnails: videoThumbnailsStudy,
+            playlist: musicToBePlayedStudy,
+            durations: videoDurationsStudy,
+            placeholder: placeholderStudy,
+            searchbar: searchbarStudy,
+            queue: studyQueue,
+            mode: "study"  // To be used
+        };
+    }
+    else {
+        return {
+            thumbnails: videoThumbnailsBreak,
+            playlist: videosToBePlayedBreak,
+            durations: videoDurationsBreak,
+            placeholder: placeholderBreak,
+            searchbar: searchbarBreak,
+            queue: breakQueue,
+            mode: "break"  // To be used
+        };
+    }
+}
+
+function updateSkipButton(){
+    let { playlist } = getCurrentPlaylistVariables();
+    if (playlist.length >= 1 && currentTvState != tvOff){
+        nextVidBtn.disabled = false;
+    }
+    else{
+        nextVidBtn.disabled = true;
+    }
+}
+
 function nextVideo(){
-    if (musicToBePlayed.length != 0){
+    let { playlist } = getCurrentPlaylistVariables();
 
-        if (musicToBePlayed.length === 1){
-            nextVidBtn.disabled = true;
-        }
-
-        toggleTV(tvScreen);
-        videoTvScreen.setAttribute("src", musicToBePlayed.shift());
+    if (playlist.length != 0){
+        toggleTv(tvOff);
+        tvVideo.setAttribute("src", playlist.shift());
         removeFromVideoQueue();
+        updateSkipButton();
         videoPlayed = true;
         const audio = new Audio("audio/censor-beep-1-372459.mp3");
-        colorBarsScreen.classList.toggle("hidden");
+        tvInterrupt.classList.toggle("hidden");
         audio.play();
         audio.addEventListener("ended", () => {
-            colorBarsScreen.classList.toggle("hidden");
-            toggleTV(tvScreen);
+            tvInterrupt.classList.toggle("hidden");
+            toggleTv(tvOff);
+            currentTvState = tvVideo;
         scheduleNextVideo();
         })
         
     }
     else {
-        toggleTV(staticTvScreen);
+        toggleTv(tvStatic);
     }
 }
 
-function toggleTV(tvState){
+function toggleTv(tvState){
+    let { playlist } = getCurrentPlaylistVariables();
     // OFF to static
-    if (tvState === tvScreen){
-        tvScreen.classList.toggle("hidden");
-        staticTvScreen.classList.toggle("hidden");
+    if (tvState === tvOff){
+        tvOff.classList.toggle("hidden");
+        tvStatic.classList.toggle("hidden");
+        currentTvState = tvStatic;
     }
     // Static to Video or OFF
-    else if (tvState === staticTvScreen){
-        if (musicToBePlayed.length != 0){
-            staticTvScreen.classList.toggle("hidden");
-            videoTvScreen.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
+    else if (tvState === tvStatic){
+        if (playlist.length != 0){
+            // nextVidBtn.disabled = false;
+            // updateSkipButton()
+            tvStatic.classList.toggle("hidden");
+            tvVideo.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
             nextVideo();
-            videoTvScreen.classList.toggle("hidden");
+            tvVideo.classList.toggle("hidden");
+            currentTvState = tvVideo;
         }
         else {
-            toggleTV(tvScreen);
-            
+            toggleTv(tvOff);
+            currentTvState = tvOff;
             alert("No videos to be played!");
         }
     }
     // Video to next video or OFF
     else {
-        if (musicToBePlayed){
-            videoTvScreen.classList.toggle("hidden");
+        if (playlist){
+            tvVideo.classList.toggle("hidden");
+            currentTvState = tvVideo;
         }
         else {
             alert("No videos to be played!");
@@ -267,13 +360,13 @@ function toggleTV(tvState){
 
 // Executes function to update displayed clock every second
 SECOND = 1_000;
-button.addEventListener('click', () => {
+startPauseTimerBtn.addEventListener('click', () => {
     timeStopped = !timeStopped;
 
     // Starts timer
     if (!alarmTimerIdInterval || !timeStopped){
         alarmTimerIdInterval = setInterval(updateClock, SECOND)
-        if (currentState === STATE.STUDYING){
+        if (currentTimerState === STATE.STUDYING){
             italicContainer.textContent = "STUDY";
             italicContainer.style.color = 'red';
             img.src = TRAFFIC_LIGHT.GREEN;
@@ -287,14 +380,14 @@ button.addEventListener('click', () => {
 
     // Stops timer if interruption occurs and resets it
     else {
-        [minutesLeft, secondsLeft] = currentState.split(":");
+        [minutesLeft, secondsLeft] = currentTimerState.split(":");
         displayTime(minutesLeft, secondsLeft);
         clearInterval(alarmTimerIdInterval);
         img.src = TRAFFIC_LIGHT.RED;
     }
 })
 
-tvScreen.addEventListener('click', () => {
+tvOff.addEventListener('click', () => {
     let remoteImg = document.createElement("img")
 
     remoteImg.style.position = 'absolute';
@@ -304,7 +397,7 @@ tvScreen.addEventListener('click', () => {
     remoteImg.style.transform = 'rotateY(180deg)';
     remoteImg.src = "images/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
     document.body.appendChild(remoteImg)
-    toggleTV(tvScreen);
+    toggleTv(tvOff);
 
     setTimeout( () => {
         if (remoteImg){
@@ -313,12 +406,15 @@ tvScreen.addEventListener('click', () => {
     }, 500);
 });
 
-addMusicBtn.addEventListener('click', () => {
-    url = searchBar.value;
+
+
+function addMusic(queueToAddMusicTo){
+    let { playlist, durations, placeholder, searchbar } = getPlaylistVariables(queueToAddMusicTo);
+    url = searchbar.value;
     videoId = url.match(/(?<=\?v=)[^&]+/)
     isValidUrl = (url.startsWith("www.youtube.com") || url.startsWith("https://www.youtube.com")) && videoId;
 
-    searchBar.value = "";
+    searchbar.value = "";
 
     if (isValidUrl){
         videoDurationInput = prompt("Optional: Input the duration of the video you want to play. Otherwise you'll have to actively click the ⏩ to move on to the next video:");
@@ -341,39 +437,76 @@ addMusicBtn.addEventListener('click', () => {
             seconds = seconds ? parseInt(seconds, 10) : 0;
             // Extra 30 seconds act as grace to play/stop video
             totalSeconds = (hours * 3600) + (minutes * 60) + seconds + 0;
-            videoDurations.push(totalSeconds);
+            durations.push(totalSeconds);
         }
         else {
-            videoDurations.push(null);
+            durations.push(null);
         }
 
         embedLink = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1`;
         thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 
-        musicToBePlayed.push(embedLink);
+        playlist.push(embedLink);
 
-        if (document.querySelector("#no-video-text")){
+        if (placeholder){
             placeholder.remove();
         }
 
-        addToVideoQueue(thumbnailLink);
+        addToVideoQueue(queueToAddMusicTo, thumbnailLink);
+        updateSkipButton()
 
         // Makes nextVidBtn clickable
-        if (videoPlayed){
-            nextVidBtn.disabled = false;
-        }
+        // let { mode } = getCurrentPlaylistVariables();
+        // if (mode === queueToAddMusicTo){
+        //     nextVidBtn.disabled = false;
+        // }
     }
     else{
         alert("You input an invalid URL. Please copy/paste a valid URL to a YouTube video.");
     }
+}
+
+
+// addMusicBtns.forEach( addMusicBtn => {
+//     addMusicBtn.addEventListener('click', () => {
+//         let { playlist, mode } = getCurrentPlaylistVariables();
+//         if(playlist.length > 1 && mode === "study"){
+//             nextVidBtn.disabled = true;
+//         }
+//         addMusic(studyQueue);
+//     });
+// });
+addStudyMusicBtn.addEventListener('click', () => {
+    console.log("STUDY BUTTON CLICKED");
+    let { playlist, mode } = getPlaylistVariables(studyQueue);
+    // if(playlist.length > 1 && mode === "study"){
+    //     nextVidBtn.disabled = false;
+    // }
+    // else{
+    //     nextVidBtn.disabled = true;
+    // }
+    addMusic(studyQueue);
 });
 
+addBreakVideoBtn.addEventListener("click", () => {
+    console.log("BREAK BUTTON CLICKED");
+    let { playlist, mode } = getPlaylistVariables(breakQueue);
+    
+    // if(playlist.length > 1 && mode === "break"){
+    //     nextVidBtn.disabled = false;
+    // }
+    // else{
+    //     nextVidBtn.disabled = true;
+    // }
+    addMusic(breakQueue);
+})
 
-staticTvScreen.addEventListener("click", () => {
-    toggleTV(staticTvScreen);
+
+tvStatic.addEventListener("click", () => {
+    toggleTv(tvStatic);
     toggleMute();
 });
 
-tvScreen.addEventListener("click", () => {
+tvOff.addEventListener("click", () => {
     toggleMute();
 })

@@ -17,7 +17,7 @@
                 <div id="display">
                     <div id="display-time">25:00</div>
                 </div>
-                <button class="clickable">Start/Stop</button>
+                <button id="timer-button" class="clickable">Start/Stop</button>
             </div>
             <div id="todo">
                 <div id="session-text-area">
@@ -46,25 +46,53 @@
                 <source src="video/Static_with_white_noise.webm" type="video/webm">
                 Your browser does not support the video tag.
             </video>
-            <div id="click-overlay" class="clickable">
+            <div id="tv-off-screen" class="clickable">
                 <img src="images/cartoon/Tv_color_bars.svg" id="transition-screen" class="hidden">
             </div>
         </div>
 
-        <hr style="width:80%; ">
+        <hr style="width:90%; ">
 
         <div id="study-playlist-section">
             <h2>Compile your Personal Playlist to Study to!</h2>
-            <div id="searchbar">
-                <svg id="add-music-button" class="clickable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" height="35px">
+            <div id="searchbar-1" class="searchbar">
+                <svg id="add-music-button-1" class="add-music-button" class="clickable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" height="35px">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-                <input type="search" size="40" placeholder="https://www.youtube.com/...">
+                <input id="url-container-1" type="search" size="40" placeholder="https://www.youtube.com/...">
             </div>
-            <div id="queue">
+            <div id="study-queue" class="queue">
 
             </div>
-            <div id="no-video-text">
+            <div id="no-video-text-1">
+                <h3>No videos yet. Your list will appear here once you add some!</h3>
+                <p>To get started:
+                    <ol style="text-align: left;">
+                        <li>Paste the URL of the YouTube video that you want to play</li>
+                        <li>Click 
+                            <svg style="height: 18px;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" height="35px">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            and the thumbnail will appear here
+                        </li>
+                        <li>Click the 📺 to turn it on</li>
+                        <li>Click the 📺 again to play the next video in the queue</li>
+                    </ol>
+            </p>
+            </div>
+        </div>
+        <div id="break-playlist-section">
+            <h2>Compile your Personal Playlist to Watch During Break!</h2>
+            <div id="searchbar-2" class="searchbar">
+                <svg id="add-music-button-2" class="clickable" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" height="35px">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <input id="url-container-2" type="search" size="40" placeholder="https://www.youtube.com/...">
+            </div>
+            <div id="break-queue" class="queue">
+
+            </div>
+            <div id="no-video-text-2">
                 <h3>No videos yet. Your list will appear here once you add some!</h3>
                 <p>To get started:
                     <ol style="text-align: left;">
@@ -83,6 +111,6 @@
         </div>
     </main>
     <footer>
-
+        
     </footer>
 </html>
