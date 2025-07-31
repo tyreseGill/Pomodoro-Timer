@@ -219,7 +219,7 @@ footer {
     flex: 1 1 auto;
     flex-wrap: wrap;
     justify-content: space-around;
-    align-items: center;
+    align-items: flex-start;
 }
 
 #study-playlist-section, #break-playlist-section {
