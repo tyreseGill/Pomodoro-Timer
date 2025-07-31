@@ -76,9 +76,12 @@ function addToVideoQueue(queueToAddMusicTo, thumbnailLink){
 }
 
 function removeFromVideoQueue(){
-    let { thumbnails } = getCurrentPlaylistVariables();
+    let { thumbnails, musicButton, queue } = getCurrentPlaylistVariables();
     videoToBeRemoved = thumbnails.shift();
     videoToBeRemoved.remove();
+    if (queue.length === 0){
+        musicButton.classList.remove("clickable");
+    }
     updateVideoQueue();
 }
 
@@ -100,6 +103,7 @@ function getCurrentPlaylistVariables(){
             thumbnails: videoThumbnailsStudy,
             playlist: musicToBePlayedStudy,
             durations: videoDurationsStudy,
+            musicButton: addStudyMusicBtn,
             placeholder: placeholderStudy,
             searchbar: searchbarStudy,
             queue: studyQueue,
@@ -111,6 +115,7 @@ function getCurrentPlaylistVariables(){
             thumbnails: videoThumbnailsBreak,
             playlist: videosToBePlayedBreak,
             durations: videoDurationsBreak,
+            musicButton: addBreakVideoBtn,
             placeholder: placeholderBreak,
             searchbar: searchbarStudy,
             queue: breakQueue,
@@ -126,6 +131,7 @@ function getPlaylistVariables(queueBeingEdited){
             thumbnails: videoThumbnailsStudy,
             playlist: musicToBePlayedStudy,
             durations: videoDurationsStudy,
+            musicButton: addStudyMusicBtn,
             placeholder: placeholderStudy,
             searchbar: searchbarStudy,
             queue: studyQueue,
@@ -137,6 +143,7 @@ function getPlaylistVariables(queueBeingEdited){
             thumbnails: videoThumbnailsBreak,
             playlist: videosToBePlayedBreak,
             durations: videoDurationsBreak,
+            musicButton: addBreakVideoBtn,
             placeholder: placeholderBreak,
             searchbar: searchbarBreak,
             queue: breakQueue,
@@ -178,39 +185,135 @@ function nextVideo(){
     }
 }
 
+function extractDomain(url){
+    urlWithoutProtocol = url.replace("https://", "");
+    urlWithoutProtocolAndSubDomain = urlWithoutProtocol.replace("www.", "");
+    [ domainName, path ] = urlWithoutProtocolAndSubDomain.split("/");
+    return {
+        domainName: domainName,
+        path: path
+    };
+}
+
+function isValidDomain(domainName){
+    validDomainNames = [
+        "youtube.com",
+        "archive.org"
+    ];
+    if (validDomainNames.includes(domainName)){
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+// function checkVideoId(videoId){
+//     if (!videoId){
+//         alert("The link you provided doesn't specify the video ID.");
+//     }
+// }
+
+function extractVideoId(url){
+    let { domainName } = extractDomain(url);
+    let videoId = null;
+    domainName = domainName ? domainName : null;
+
+    supportedDomain = isValidDomain(domainName);
+    if (supportedDomain){
+
+        extractVideoIdByDomain = {
+            "youtube.com": url.match(/(?<=\?v=)[^&]+/),
+            "archive.org": url.match(/[^/]+$/)
+        }
+        videoId = extractVideoIdByDomain[domainName];
+    }
+    else {
+        alert(`The domain "${domainName}" is not supported. Please input a valid URL by either "youtube.com" or "archive.org".`);
+    }
+
+    return videoId;
+}
+
+function generateEmbedLink(url){
+    let { domainName } = extractDomain(url);
+    videoId = extractVideoId(url);
+
+    generateEmbedLinkByDomain = {
+        "youtube.com": `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1`,
+        "archive.org": `https://archive.org/embed/${videoId}?autoplay=1`
+    };
+    embedLink = generateEmbedLinkByDomain[domainName];
+    return embedLink;
+}
+
+function generateThumbnailLink(url){
+    let { domainName } = extractDomain(url);
+    videoId = extractVideoId(url);
+
+    generateThumbnailLinkByDomain = {
+        "youtube.com": `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+        "archive.org": `https://archive.org/services/img/${videoId}`
+    };
+
+    thumbnailLink = generateThumbnailLinkByDomain[domainName];
+    return thumbnailLink;
+}
+
+function convertVideoDurationToSeconds(videoDurationInput){
+    parts = videoDurationInput.split(":");
+    let [hours, minutes, seconds] = [0, 0, 0];
+
+    parts = parts.map(p => p ? parseInt(p, 10) : 0);
+
+    if (parts.length === 3) {
+        [hours, minutes, seconds] = parts;
+    } else if (parts.length === 2) {
+        [minutes, seconds] = parts;
+    } else {
+        [seconds] = parts;
+    }
+
+    totalSeconds = (hours * 3600) + (minutes * 60) + seconds + 0;
+    return totalSeconds;
+}
+
 function addMusic(queueToAddMusicTo){
-    let { playlist, durations, placeholder, searchbar } = getPlaylistVariables(queueToAddMusicTo);
+    let { playlist, durations, musicButton, placeholder, searchbar } = getPlaylistVariables(queueToAddMusicTo);
+
+    // Updating elements on screen
     url = searchbar.value;
-    videoId = url.match(/(?<=\?v=)[^&]+/)
-    isValidUrl = (url.startsWith("www.youtube.com") || url.startsWith("https://www.youtube.com")) && videoId;
-
     searchbar.value = "";
+    musicButton.style.opacity = 0.25;
+    musicButton.classList.remove("clickable");
 
-    if (isValidUrl){
-        videoDurationInput = prompt("Optional: Input the duration of the video you want to play. Otherwise you'll have to actively click the ⏩ to move on to the next video:");
+    let { path } = extractDomain(url);
+    console.log("Path:", path);
+
+    if (!path){
+        alert(`The url "${url}" doesn't contain the video ID.`);
+        return;
+    }
+
+    let videoId = extractVideoId(url);
+
+    console.log(`Video Id is: ${videoId}`);
+
+    if (videoId){
+        videoDurationInput = prompt(`Optional: Input the duration of the video you want to play following the format "hh:mm:ss". Otherwise you'll have to actively click the ⏩ to move on to the next video.`);
         if (videoDurationInput){
-            parts = videoDurationInput.split(":");
-            let [hours, minutes, seconds] = [0, 0, 0];
-
-            parts = parts.map(p => p ? parseInt(p, 10) : 0);
-
-            if (parts.length === 3) {
-                [hours, minutes, seconds] = parts;
-            } else if (parts.length === 2) {
-                [minutes, seconds] = parts;
-            } else {
-                [seconds] = parts;
-            }
-
-            totalSeconds = (hours * 3600) + (minutes * 60) + seconds + 0;
+            totalSeconds = convertVideoDurationToSeconds(videoDurationInput);
             durations.push(totalSeconds);
         }
-        else {
+        else if (videoDurationInput === "") {
             durations.push(null);
         }
+        else {
+            return;
+        }
 
-        embedLink = `https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1`;
-        thumbnailLink = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        embedLink = generateEmbedLink(url);
+        thumbnailLink = generateThumbnailLink(url);
 
         playlist.push(embedLink);
 
@@ -221,15 +324,44 @@ function addMusic(queueToAddMusicTo){
         addToVideoQueue(queueToAddMusicTo, thumbnailLink);
         updateSkipButton()
     }
-    else{
-        alert("You input an invalid URL. Please copy/paste a valid URL to a YouTube video.");
-    }
 }
 
+searchbarStudy.addEventListener('input', () => {
+    if (searchbarStudy.value){
+        addStudyMusicBtn.classList.add("clickable");
+        addStudyMusicBtn.style.opacity = 1;
+    }
+    else {
+        addStudyMusicBtn.classList.remove("clickable");
+        addStudyMusicBtn.style.opacity = 0.25;
+    }
+});
+
+searchbarBreak.addEventListener('input', () => {
+    if (searchbarBreak.value){
+        addBreakVideoBtn.classList.add("clickable");
+        addBreakVideoBtn.style.opacity = 1;
+    }
+    else {
+        addBreakVideoBtn.classList.remove("clickable");
+        addBreakVideoBtn.style.opacity = 0.25;
+    }
+});
+
 addStudyMusicBtn.addEventListener('click', () => {
-    addMusic(studyQueue);
+    if (searchbarStudy.value){
+        addMusic(studyQueue);
+    }
+    else {
+        addStudyMusicBtn.style.opacity = 0.25;
+    }
 });
 
 addBreakVideoBtn.addEventListener("click", () => {
-    addMusic(breakQueue);
+    if (searchbarBreak.value){
+        addMusic(breakQueue);
+    }
+    else {
+        addBreakVideoBtn.style.opacity = 0.25;
+    }
 })

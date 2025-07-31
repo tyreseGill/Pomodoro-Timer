@@ -13,6 +13,11 @@ header {
     margin-bottom: 10px;
     border-top: grey solid 3px;
     border-bottom: grey solid 3px;
+    justify-items: center;
+}
+
+header h1 {
+    padding:  5px 10px 5px 10px;
 }
 
 main {
@@ -23,12 +28,13 @@ main {
     justify-content: space-around;
 }
 
-h1 {
+h1, h2 {
     text-align: center;
     margin: 5px;
 }
 
 hr {
+    margin-top: 27.5px;
     margin-bottom: 27.5px;
 }
 
@@ -36,9 +42,9 @@ button {
     margin: 10px;
 }
 
-footer {
-    margin-top: 100px;
-}
+/* footer {
+    /* margin-top: 20px; */
+/* } */
 
 .hidden {
     visibility: hidden;
@@ -57,6 +63,7 @@ footer {
     padding: 10px;
     border-radius: 5px;
     max-width: 325px;
+    margin: 20px;
 }
 
 #clock {
@@ -214,7 +221,11 @@ footer {
     border-radius: 5px;
 }
 
-#playlist-container {
+#playlist-container-outer {
+    flex: 1 1 auto;
+}
+
+#playlist-container-inner {
     display: flex;
     flex: 1 1 auto;
     flex-wrap: wrap;
@@ -222,7 +233,20 @@ footer {
     align-items: flex-start;
 }
 
-#study-playlist-section, #break-playlist-section {
+h1, h2 {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    width: fit-content;
+}
+
+
+#playlist-container-outer #your-playlist {
+    display: block;
+    margin: 0 auto 30px auto;
+}
+
+.playlist {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -230,8 +254,11 @@ footer {
     min-height: 425px;
     border: grey solid 3px;
     border-radius: 5px;
-    /* background-color: antiquewhite; */
     padding: 5px;
+}
+
+.add-music-button {
+    opacity: 25%;
 }
 
 #study-playlist-section {
@@ -241,6 +268,24 @@ footer {
 #break-playlist-section {
     background-color: lavender;
     /* display: none; */ /* NOTE: Change once this playlist is functional, should pop up after study playlist is populated */
+}
+
+#support-title {
+    justify-self: center;
+}
+
+#supported-platforms {
+    display: flex;
+    gap: 100px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+#supported-platforms img {
+    width: 100px;
 }
 
 .no-video-text {
