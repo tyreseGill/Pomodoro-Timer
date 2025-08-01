@@ -3,6 +3,7 @@ const tvOff = document.querySelector("#tv-off-screen");
 const tvStatic = document.querySelector("#static-tv-screen");
 const tvInterrupt = document.querySelector("#transition-screen");
 const tvVideo = document.querySelector("#video-screen");
+const timerSoundingOff = new Audio('audio/Beep_alarm_clock.ogg');
 
 let currentTvState = tvOff;
 
@@ -21,21 +22,21 @@ function toggleTv(tvState){
     let { mode, playlist } = getCurrentPlaylistVariables();
     // OFF to static
     if (tvState === tvOff){
-        tvOff.classList.toggle("hidden");
-        tvStatic.classList.toggle("hidden");
+        tvOff.classList.add("hidden");
+        tvStatic.classList.remove("hidden");
         currentTvState = tvStatic;
     }
     // Static to Video or OFF
     else if (tvState === tvStatic){
-        if (playlist.length != 0){
-            tvStatic.classList.toggle("hidden");
+        if (playlist.length > 0){
             tvVideo.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share");
             nextVideo();
-            tvVideo.classList.toggle("hidden");
+
             currentTvState = tvVideo;
         }
         else {
-            toggleTv(tvOff);
+            tvStatic.classList.add("hidden");
+            tvOff.classList.remove("hidden");
             currentTvState = tvOff;
             alert(`No videos to be played! Add some to the ${mode} playlist!`);
         }
@@ -43,10 +44,13 @@ function toggleTv(tvState){
     // Video to next video or OFF
     else {
         if (playlist){
-            tvVideo.classList.toggle("hidden");
+            tvVideo.classList.remove("hidden");
             currentTvState = tvVideo;
         }
         else {
+            tvOff.classList.remove("hidden");
+            tvVideo.classList.add("hidden");
+            currentTvState = tvOff;
             alert(`No videos to be played! Add some to your ${mode} playlist!`);
         }
     }
@@ -65,7 +69,7 @@ tvOff.addEventListener('click', () => {
     remoteImg.style.right = '10px';
     remoteImg.style.width = '40px';
     remoteImg.style.transform = 'rotateY(180deg)';
-    remoteImg.src = "images/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
+    remoteImg.src = "img/cartoon/Tv-remote_-_Delapouite_-_game-icons.svg"
     document.body.appendChild(remoteImg)
     toggleTv(tvOff);
     toggleMute();
@@ -76,3 +80,24 @@ tvOff.addEventListener('click', () => {
         }
     }, 500);
 });
+
+window.timerSoundingOff.addEventListener("playing", () => {
+    console.log("Timer going off!")
+    tvInterrupt.classList.remove("hidden");
+    nextVideo();
+
+    // toggleTv(tvOff);
+    // toggleTv(tvStatic);
+});
+
+window.timerSoundingOff.addEventListener("ended", () => {
+    tvInterrupt.classList.add("hidden");
+    // toggleTv(tvOff);
+    // toggleTv(tvStatic);
+});
+
+// if (window.timerSoundingOff && !window.timerSoundingOff.paused){
+//     console.log("Timer going off!");
+//     // toggleTv(tvStatic);
+//     // toggleMute();
+// };

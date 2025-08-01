@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Study Session</title>
-    <script defer src="playlistManager.js"></script>
-    <script defer src="titleManager.js"></script>
-    <script defer src="timer.js"></script>
-    <script defer src="tvManager.js"></script>
-    <link rel="stylesheet" href="styles.css"></link>
+    <script defer src="js/titleManager.js"></script>
+    <script defer src="js/timer.js"></script>
+    <script defer src="js/playlistManager.js"></script>
+    <script defer src="js/tvManager.js"></script>
+    <link rel="stylesheet" href="css/styles.css"></link>
 </head>
 <body>
     <header>
@@ -33,7 +33,7 @@
                         </b>
                     </p>
                 </div>
-                <img id="todo-image" src="images/traffic-lights/64px-Traffic_lights_dark_red.svg.png">
+                <img id="todo-image" src="img/traffic-lights/64px-Traffic_lights_dark_red.svg.png">
             </div>
             <button id="nextVidBtn" disabled onclick="nextVideo()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" width="20px" stroke="currentColor" class="size-6">
@@ -43,20 +43,20 @@
         </div>
 
         <div id="tv-container">
-            <img src="images/cartoon/TV-icon-2.svg" id="tv-set">
+            <img src="img/cartoon/TV-icon-2.svg" id="tv-set">
             <iframe id="video-screen" class="hidden clickable" title="YouTube video player" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" modestbranding=1 allowfullscreen controls="0"></iframe>
             <video muted autoplay loop playsinline id="static-tv-screen" class="hidden clickable">
                 <source src="video/Static_with_white_noise.webm" type="video/webm">
                 Your browser does not support the video tag.
             </video>
             <div id="tv-off-screen" class="clickable">
-                <img src="images/cartoon/Tv_color_bars.svg" id="transition-screen" class="hidden">
+                <img src="img/cartoon/Tv_color_bars.svg" id="transition-screen" class="hidden">
             </div>
         </div>
 
         <hr style="width:90%; ">
             <div id="playlist-container-outer">
-            <h2 id="your-playlist">Your Playlists</h2>
+            <h2 id="your-playlist">🎵 Your Playlists 🎵</h2>
             <div id="playlist-container-inner">
                 <div id="study-playlist-section" class="playlist">
                     <h2 id="study-playlist-title">Beats to Study to!</h2>
@@ -124,10 +124,10 @@
             <h2 id="support-title">Supported Platforms</h2>
             <div id="supported-platforms">
                 <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer">
-                    <img src="images/platform-icons/YouTube_full-color_icon_(2017).svg" class="clickable">
+                    <img src="img/platform-icons/YouTube_full-color_icon_(2017).svg" class="clickable">
                 </a>
                 <a href="https://archive.org/" target="_blank" rel="noopener noreferrer">
-                    <img src="images/platform-icons/Internet_Archive_logo_and_wordmark.svg" class="clickable">
+                    <img src="img/platform-icons/Internet_Archive_logo_and_wordmark.svg" class="clickable">
                 </a>
             </div>
         </div>

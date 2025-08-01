@@ -17,6 +17,50 @@ let videoDurationsStudy = [];
 let videoDurationsBreak = [];
 let colorToggleGrey = false;
 
+function saveQueueToLocalStorage() {
+    const studyQueueData = {
+        thumbnails: videoThumbnailsStudy.map(img => img.src),
+        playlist: musicToBePlayedStudy,
+        durations: videoDurationsStudy
+    };
+
+    const breakQueueData = {
+        thumbnails: videoThumbnailsBreak.map(img => img.src),
+        playlist: videosToBePlayedBreak,
+        durations: videoDurationsBreak
+    };
+
+    localStorage.setItem("studyQueueData", JSON.stringify(studyQueueData));
+    localStorage.setItem("breakQueueData", JSON.stringify(breakQueueData));
+}
+
+function loadQueuesFromLocalStorage() {
+    const studyQueueData = JSON.parse(localStorage.getItem("studyQueueData"));
+    const breakQueueData = JSON.parse(localStorage.getItem("breakQueueData"));
+
+    if (studyQueueData) {
+        musicToBePlayedStudy = studyQueueData.playlist || [];
+        videoDurationsStudy = studyQueueData.durations || [];
+        
+        updateSkipButton();
+
+        studyQueueData.thumbnails.forEach((src) => {
+            addToVideoQueue(studyQueue, src);
+        });
+    }
+
+    if (breakQueueData) {
+        videosToBePlayedBreak = breakQueueData.playlist || [];
+        videoDurationsBreak = breakQueueData.durations || [];
+
+        updateSkipButton();
+
+        breakQueueData.thumbnails.forEach((src) => {
+            addToVideoQueue(breakQueue, src);
+        });
+    }
+}
+
 function updateVideoQueue(addedThumbnail=null){
     let { thumbnails } = getCurrentPlaylistVariables();
     firstVideo = thumbnails[0];
@@ -42,11 +86,10 @@ function updateVideoQueue(addedThumbnail=null){
         thumbnails.forEach((img) => {
             img.style.backgroundColor = toggleVideoBackgroundColor();
         })
-        // Rounds the borders of the single video present
+
         if (thumbnails.length === 1){
             firstVideo.style.borderRadius = "10px";
         }
-        // Rounds top and bottom of the borders of the first and last videos
         else if (thumbnails.length > 1) {
             firstVideo.style.borderRadius = "10px 10px 0 0";
             lastVideoAdded.style.borderRadius = "0 0 10px 10px";
@@ -60,30 +103,38 @@ function toggleVideoBackgroundColor(addedThumbnail=null) {
 } 
 
 function addToVideoQueue(queueToAddMusicTo, thumbnailLink){
-    let {thumbnails, queue} = getPlaylistVariables(queueToAddMusicTo);
+    let { thumbnails, queue, placeholder } = getPlaylistVariables(queueToAddMusicTo);
 
     let addedThumbnail = document.createElement("img");
-
     addedThumbnail.setAttribute('width', '300');
     addedThumbnail.setAttribute('src', thumbnailLink);
 
+    placeholder.style.display = "none";
+
     queue.appendChild(addedThumbnail);
-    addedThumbnail.textContent = embedLink;
     addedThumbnail.style.backgroundColor = toggleVideoBackgroundColor();
 
     updateVideoQueue(addedThumbnail);
     thumbnails.push(addedThumbnail);
+
+    saveQueueToLocalStorage();
 }
 
 function removeFromVideoQueue(){
-    let { thumbnails, musicButton, queue } = getCurrentPlaylistVariables();
-    videoToBeRemoved = thumbnails.shift();
+    let { thumbnails, musicButton, queue, placeholder } = getCurrentPlaylistVariables();
+    let videoToBeRemoved = thumbnails.shift();
     videoToBeRemoved.remove();
+
     if (queue.length === 0){
         musicButton.classList.remove("clickable");
+        placeholder.style.display = "";
     }
+    
     updateVideoQueue();
+
+    saveQueueToLocalStorage();
 }
+
 
 
 
@@ -107,7 +158,7 @@ function getCurrentPlaylistVariables(){
             placeholder: placeholderStudy,
             searchbar: searchbarStudy,
             queue: studyQueue,
-            mode: "study"  // To be used
+            mode: "study"
         };
     }
     else {
@@ -119,7 +170,7 @@ function getCurrentPlaylistVariables(){
             placeholder: placeholderBreak,
             searchbar: searchbarStudy,
             queue: breakQueue,
-            mode: "break"  // To be used
+            mode: "break"
         };
     }
 }
@@ -164,21 +215,22 @@ function updateSkipButton(){
 
 function nextVideo(){
     let { playlist } = getCurrentPlaylistVariables();
-
-    if (playlist.length != 0){
-        toggleTv(tvOff);
+    if (playlist.length > 0){
         tvVideo.setAttribute("src", playlist.shift());
         removeFromVideoQueue();
         updateSkipButton();
-        const audio = new Audio("audio/censor-beep-1-372459.mp3");
-        tvInterrupt.classList.toggle("hidden");
-        audio.play();
-        audio.addEventListener("ended", () => {
-            tvInterrupt.classList.toggle("hidden");
-            toggleTv(tvOff);
+        const tvBeep = new Audio("audio/censor-beep-1-372459.mp3");
+        tvInterrupt.classList.remove("hidden");
+        tvBeep.play();
+        tvOff.classList.remove("hidden");
+        tvStatic.classList.add("hidden");
+        tvBeep.addEventListener("ended", () => {
+            tvInterrupt.classList.add("hidden");
+            tvOff.classList.add("hidden");
+            tvVideo.classList.remove("hidden");
             currentTvState = tvVideo;
-        scheduleNextVideo();
-        })
+            scheduleNextVideo();
+        });
     }
     else {
         toggleTv(tvStatic);
@@ -207,12 +259,6 @@ function isValidDomain(domainName){
         return false;
     }
 }
-
-// function checkVideoId(videoId){
-//     if (!videoId){
-//         alert("The link you provided doesn't specify the video ID.");
-//     }
-// }
 
 function extractVideoId(url){
     let { domainName } = extractDomain(url);
@@ -318,7 +364,7 @@ function addMusic(queueToAddMusicTo){
         playlist.push(embedLink);
 
         if (placeholder){
-            placeholder.remove();
+            placeholder.style.display = "none";
         }
 
         addToVideoQueue(queueToAddMusicTo, thumbnailLink);
@@ -365,3 +411,5 @@ addBreakVideoBtn.addEventListener("click", () => {
         addBreakVideoBtn.style.opacity = 0.25;
     }
 })
+
+document.addEventListener("DOMContentLoaded", loadQueuesFromLocalStorage);
