@@ -85,19 +85,8 @@ window.timerSoundingOff.addEventListener("playing", () => {
     console.log("Timer going off!")
     tvInterrupt.classList.remove("hidden");
     nextVideo();
-
-    // toggleTv(tvOff);
-    // toggleTv(tvStatic);
 });
 
 window.timerSoundingOff.addEventListener("ended", () => {
     tvInterrupt.classList.add("hidden");
-    // toggleTv(tvOff);
-    // toggleTv(tvStatic);
 });
-
-// if (window.timerSoundingOff && !window.timerSoundingOff.paused){
-//     console.log("Timer going off!");
-//     // toggleTv(tvStatic);
-//     // toggleMute();
-// };

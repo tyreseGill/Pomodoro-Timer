@@ -269,7 +269,7 @@ h1, h2 {
 }
 
 #break-playlist-section {
-    background-color: lavender;
+    background-color: rgb(195, 195, 250);
     /* display: none; */ /* NOTE: Change once this playlist is functional, should pop up after study playlist is populated */
 }
 
@@ -301,14 +301,17 @@ h1, h2 {
     background-color: white;
 }
 
-
 .queue {
     width: 300px;
 }
 
 .queue img {
-    margin: 0;
-    padding: 10px;
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
+    padding: 0px;
+    border: white solid 4px;
+    border-radius: 20px;
+    
 }
 
 /* 

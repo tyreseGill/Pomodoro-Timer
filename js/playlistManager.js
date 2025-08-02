@@ -15,19 +15,26 @@ let musicToBePlayedStudy = [];
 let videosToBePlayedBreak = [];
 let videoDurationsStudy = [];
 let videoDurationsBreak = [];
-let colorToggleGrey = false;
+let openNewTabTrackerStudy = [];
+let openNewTabTrackerBreak = [];
+
+// localStorage.clear();
+
+// NOTE: Need to keep track of which URLs in the playlist need to be opened in a new tab based on 
 
 function saveQueueToLocalStorage() {
     const studyQueueData = {
         thumbnails: videoThumbnailsStudy.map(img => img.src),
         playlist: musicToBePlayedStudy,
-        durations: videoDurationsStudy
+        durations: videoDurationsStudy,
+        openNewTabTracker: openNewTabTrackerStudy
     };
 
     const breakQueueData = {
         thumbnails: videoThumbnailsBreak.map(img => img.src),
         playlist: videosToBePlayedBreak,
-        durations: videoDurationsBreak
+        durations: videoDurationsBreak,
+        openNewTabTracker: openNewTabTrackerBreak
     };
 
     localStorage.setItem("studyQueueData", JSON.stringify(studyQueueData));
@@ -41,6 +48,7 @@ function loadQueuesFromLocalStorage() {
     if (studyQueueData) {
         musicToBePlayedStudy = studyQueueData.playlist || [];
         videoDurationsStudy = studyQueueData.durations || [];
+        openNewTabTrackerStudy = studyQueueData.openNewTabTracker || [];
         
         updateSkipButton();
 
@@ -52,6 +60,7 @@ function loadQueuesFromLocalStorage() {
     if (breakQueueData) {
         videosToBePlayedBreak = breakQueueData.playlist || [];
         videoDurationsBreak = breakQueueData.durations || [];
+        openNewTabTrackerBreak = breakQueueData.openNewTabTracker || [];
 
         updateSkipButton();
 
@@ -61,47 +70,6 @@ function loadQueuesFromLocalStorage() {
     }
 }
 
-function updateVideoQueue(addedThumbnail=null){
-    let { thumbnails } = getCurrentPlaylistVariables();
-    firstVideo = thumbnails[0];
-    lastVideoAdded = thumbnails[thumbnails.length - 1];
-    newVideoBeingAdded = addedThumbnail;
-    // Adding a Thumbnail to the queue
-    if (addedThumbnail){
-        // First video to be added to queue
-        if (thumbnails.length === 0){
-            addedThumbnail.style.borderRadius = "10px";
-        }
-        else {
-            firstVideo.style.borderRadius = "10px 10px 0 0";
-            newVideoBeingAdded.style.borderRadius = "0 0 10px 10px";
-            if (thumbnails.length > 1){
-                lastVideoAdded.style.borderRadius = "0";
-            }
-        }
-    }
-    // Removing a Thumbnail from the queue
-    else {
-        colorToggleGrey = false;
-        thumbnails.forEach((img) => {
-            img.style.backgroundColor = toggleVideoBackgroundColor();
-        })
-
-        if (thumbnails.length === 1){
-            firstVideo.style.borderRadius = "10px";
-        }
-        else if (thumbnails.length > 1) {
-            firstVideo.style.borderRadius = "10px 10px 0 0";
-            lastVideoAdded.style.borderRadius = "0 0 10px 10px";
-        }
-    }
-}
-
-function toggleVideoBackgroundColor(addedThumbnail=null) {
-    colorToggleGrey = !colorToggleGrey;
-    return colorToggleGrey ? "#e3e2de" : "#b8b6b2";
-} 
-
 function addToVideoQueue(queueToAddMusicTo, thumbnailLink){
     let { thumbnails, queue, placeholder } = getPlaylistVariables(queueToAddMusicTo);
 
@@ -110,11 +78,8 @@ function addToVideoQueue(queueToAddMusicTo, thumbnailLink){
     addedThumbnail.setAttribute('src', thumbnailLink);
 
     placeholder.style.display = "none";
-
+    
     queue.appendChild(addedThumbnail);
-    addedThumbnail.style.backgroundColor = toggleVideoBackgroundColor();
-
-    updateVideoQueue(addedThumbnail);
     thumbnails.push(addedThumbnail);
 
     saveQueueToLocalStorage();
@@ -130,8 +95,6 @@ function removeFromVideoQueue(){
         placeholder.style.display = "";
     }
     
-    updateVideoQueue();
-
     saveQueueToLocalStorage();
 }
 
@@ -154,6 +117,7 @@ function getCurrentPlaylistVariables(){
             thumbnails: videoThumbnailsStudy,
             playlist: musicToBePlayedStudy,
             durations: videoDurationsStudy,
+            openNewTabTracker: openNewTabTrackerStudy,
             musicButton: addStudyMusicBtn,
             placeholder: placeholderStudy,
             searchbar: searchbarStudy,
@@ -166,6 +130,7 @@ function getCurrentPlaylistVariables(){
             thumbnails: videoThumbnailsBreak,
             playlist: videosToBePlayedBreak,
             durations: videoDurationsBreak,
+            openNewTabTracker: openNewTabTrackerBreak,
             musicButton: addBreakVideoBtn,
             placeholder: placeholderBreak,
             searchbar: searchbarStudy,
@@ -182,6 +147,7 @@ function getPlaylistVariables(queueBeingEdited){
             thumbnails: videoThumbnailsStudy,
             playlist: musicToBePlayedStudy,
             durations: videoDurationsStudy,
+            openNewTabTracker: openNewTabTrackerStudy,
             musicButton: addStudyMusicBtn,
             placeholder: placeholderStudy,
             searchbar: searchbarStudy,
@@ -194,6 +160,7 @@ function getPlaylistVariables(queueBeingEdited){
             thumbnails: videoThumbnailsBreak,
             playlist: videosToBePlayedBreak,
             durations: videoDurationsBreak,
+            openNewTabTracker: openNewTabTrackerBreak,
             musicButton: addBreakVideoBtn,
             placeholder: placeholderBreak,
             searchbar: searchbarBreak,
@@ -214,11 +181,28 @@ function updateSkipButton(){
 }
 
 function nextVideo(){
-    let { playlist } = getCurrentPlaylistVariables();
+    let { playlist, openNewTabTracker } = getCurrentPlaylistVariables();
+    console.log(openNewTabTracker)
     if (playlist.length > 0){
-        tvVideo.setAttribute("src", playlist.shift());
+        nextVideoToPlay = playlist.shift()
+        openNewTab = openNewTabTracker.shift();
+
+        let { domainName } = extractDomain(nextVideoToPlay);
+
+        if (openNewTab && isValidDomain(domainName)){
+            console.log(domainName);
+            // tvStatic.classList.
+            // tvOff.classList.remove("hidden");
+
+            window.open(nextVideoToPlay);
+        }
+        else {
+            tvVideo.setAttribute("src", nextVideoToPlay);
+        }
+
         removeFromVideoQueue();
         updateSkipButton();
+
         const tvBeep = new Audio("audio/censor-beep-1-372459.mp3");
         tvInterrupt.classList.remove("hidden");
         tvBeep.play();
@@ -229,6 +213,7 @@ function nextVideo(){
             tvOff.classList.add("hidden");
             tvVideo.classList.remove("hidden");
             currentTvState = tvVideo;
+
             scheduleNextVideo();
         });
     }
@@ -250,7 +235,8 @@ function extractDomain(url){
 function isValidDomain(domainName){
     validDomainNames = [
         "youtube.com",
-        "archive.org"
+        "archive.org",
+        "tubitv.com"
     ];
     if (validDomainNames.includes(domainName)){
         return true;
@@ -293,6 +279,40 @@ function generateEmbedLink(url){
     return embedLink;
 }
 
+function isArchiveContent(url){
+    let { domainName } = extractDomain(url);
+    return (domainName === "archive.org") ? true : false;
+}
+
+function isTubiContent(url){
+    let { domainName } = extractDomain(url);
+    return (domainName === "tubitv.com") ? true : false;
+}
+
+async function getMediaType(archiveUrl){
+    // Movies should play on TV, while everything else should open up a new tab
+    let mediatype = null;
+    const id = extractVideoId(archiveUrl);
+    const response = await fetch(`https://archive.org/metadata/${id}`);
+
+    if (!response.ok){
+        throw new Error(`Could not fetch metadata from ${archiveUrl}`);
+    }
+    const data = await response.json();
+
+    try {
+        mediatype = data.metadata.mediatype;
+    }
+    catch {
+        return "folder"
+    }
+    return mediatype;
+}
+
+function isEmbeddable(mediatype){
+    return mediatype === "movies" ? true : false;
+}
+
 function generateThumbnailLink(url){
     let { domainName } = extractDomain(url);
     videoId = extractVideoId(url);
@@ -324,8 +344,9 @@ function convertVideoDurationToSeconds(videoDurationInput){
     return totalSeconds;
 }
 
-function addMusic(queueToAddMusicTo){
-    let { playlist, durations, musicButton, placeholder, searchbar } = getPlaylistVariables(queueToAddMusicTo);
+async function addMusic(queueToAddMusicTo){
+    let { playlist, durations, musicButton, placeholder, searchbar, openNewTabTracker } = getPlaylistVariables(queueToAddMusicTo);
+    let openNewTab = false;
 
     // Updating elements on screen
     url = searchbar.value;
@@ -334,18 +355,23 @@ function addMusic(queueToAddMusicTo){
     musicButton.classList.remove("clickable");
 
     let { path } = extractDomain(url);
-    console.log("Path:", path);
 
     if (!path){
         alert(`The url "${url}" doesn't contain the video ID.`);
         return;
     }
 
-    let videoId = extractVideoId(url);
-
-    console.log(`Video Id is: ${videoId}`);
-
-    if (videoId){
+    // Opens new tab for non-embeddable content (or content that cannot fit reliablely on TV)
+    if (isArchiveContent(url)){
+        let mediatype = await getMediaType(url);
+        if (!isEmbeddable(mediatype)){
+            openNewTab = true;
+        }
+    }
+    else if (isTubiContent(url)){
+        openNewTab = true;
+    }
+    else {
         videoDurationInput = prompt(`Optional: Input the duration of the video you want to play following the format "hh:mm:ss". Otherwise you'll have to actively click the ⏩ to move on to the next video.`);
         if (videoDurationInput){
             totalSeconds = convertVideoDurationToSeconds(videoDurationInput);
@@ -354,22 +380,35 @@ function addMusic(queueToAddMusicTo){
         else if (videoDurationInput === "") {
             durations.push(null);
         }
-        else {
-            return;
-        }
-
-        embedLink = generateEmbedLink(url);
-        thumbnailLink = generateThumbnailLink(url);
-
-        playlist.push(embedLink);
-
-        if (placeholder){
-            placeholder.style.display = "none";
-        }
-
-        addToVideoQueue(queueToAddMusicTo, thumbnailLink);
-        updateSkipButton()
     }
+
+    // embedLink = generateEmbedLink(url);
+    // playlist.push(embedLink);
+    
+    // thumbnailLink = generateThumbnailLink(url);
+    // addToVideoQueue(queueToAddMusicTo, thumbnailLink);    
+
+
+    if(!isTubiContent(url)){
+        embedLink = generateEmbedLink(url);
+        playlist.push(embedLink);
+    }
+    else {
+        embedLink = url;
+        playlist.push(embedLink);
+    }
+    console.log(url);
+    console.log(!isTubiContent(url))
+    thumbnailLink = !isTubiContent(url) ? generateThumbnailLink(url) : "img/platform-icons/64px-Tubi_icon.png";
+    
+    addToVideoQueue(queueToAddMusicTo, thumbnailLink);
+
+    if (placeholder){
+        placeholder.style.display = "none";
+    }
+
+    updateSkipButton();
+    openNewTabTracker.push(openNewTab);
 }
 
 searchbarStudy.addEventListener('input', () => {

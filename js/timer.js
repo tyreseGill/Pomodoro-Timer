@@ -10,9 +10,9 @@ const STATE = {
     "LONG_BREAK": "30:00"
 }
 const TRAFFIC_LIGHT = {
-    "GREEN": 'images/traffic-lights/64px-Traffic_lights_dark_green.svg.png',
-    "YELLOW": 'images/traffic-lights/64px-Traffic_lights_dark_yellow.svg.png',
-    "RED": 'images/traffic-lights/64px-Traffic_lights_dark_red.svg.png'
+    "GREEN": 'img/traffic-lights/64px-Traffic_lights_dark_green.svg.png',
+    "YELLOW": 'img/traffic-lights/64px-Traffic_lights_dark_yellow.svg.png',
+    "RED": 'img/traffic-lights/64px-Traffic_lights_dark_red.svg.png'
 }
 
 const SECOND = 1_000;
@@ -146,5 +146,10 @@ window.timerSoundingOff.addEventListener('ended', () => {
     timeDisplay.style.color = '';
     alarmTimerIdInterval = setInterval(updateClock, SECOND)
     img.src = TRAFFIC_LIGHT.GREEN;
+
+    if (newTab){
+        newTab.close();
+    }
+
     updateSkipButton();
 });
